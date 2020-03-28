@@ -1,0 +1,36 @@
+.nav-btn {
+  color: skyblue;
+  background-color: #282c34;
+  font-weight: bold;
+}
+.nav-btn:hover {
+  color: white;
+}
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: #282c34;
+  gap: 5em;
+}
+.nav-item{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+.nav-icon {
+  background-color: skyblue;
+  width: 32px;
+  border-radius: 5%;
+  padding: 1px;
+}
+.nav-btn:hover > .nav-icon {
+    background-color: white;
+    animation-name: size-anim;
+    animation-duration: 0.5s;
+}
+
+@keyframes size-anim{
+  from {width: 32px;}
+  to{width: 28px;}
+}
