@@ -2,7 +2,11 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.js";
-import ProductsTable from "./components/ProductsTable";
+import InicioComponent from "./components/InicioComponent";
+import ValoresComponent from "./components/ValoresComponent";
+import ComprasComponent from "./components/ComprasComponent";
+import VentasComponent from "./components/VentasComponent";
+import ReportesComponent from "./components/ReportesComponent";
 import "./App.css";
 
 function App() {
@@ -11,11 +15,20 @@ function App() {
       <Route path="/">
         <Navbar>Gestion App</Navbar>
       </Route>
-      <Route path="/Compras">
-        <div className="container mt-2">
-        <h4>Compras</h4>
-        <ProductsTable />
-        </div>
+      <Route exact path="/">
+        <InicioComponent />
+      </Route>
+      <Route path="/compras">
+        <ComprasComponent />
+      </Route>
+      <Route path="/valores">
+        <ValoresComponent />
+      </Route>
+      <Route path="/ventas">
+        <VentasComponent />
+      </Route>
+      <Route path="/reportes">
+        <ReportesComponent />
       </Route>
     </Router>
   );

@@ -1,0 +1,13 @@
+.head-session{
+    background-color: #282c34;
+    margin-top: 2em;
+    margin-left: 2em;
+    margin-right: 2em;
+    border-radius: 1%;
+    text-align: center;
+}
+
+.text-session{
+    color: white;
+    font-size: 1.15em;
+}

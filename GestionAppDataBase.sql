@@ -1,5 +1,19 @@
 USE GestionApp;
 
+CREATE TABLE Roles(
+Nivel_Rol tinyint PRIMARY KEY,
+Nombre_Rol varchar(30) not null,
+)
+
+CREATE TABLE Usuarios(
+ID_Usu int identity,
+Nombre_Usu varchar(20) not null,
+Rol_Usu tinyint not null,
+Password_Usu varchar(35) not null,
+CONSTRAINT PK_Usuarios PRIMARY KEY(ID_Usu),
+CONSTRAINT FK_Rol FOREIGN KEY(Rol_Usu) REFERENCES Roles(Nivel_Rol)
+)
+
 CREATE TABLE Categorias(
 ID_Cat int identity,
 Nombre_Cat varchar(30) not null,
@@ -55,3 +69,13 @@ Fecha_Rep date not null,
 CONSTRAINT PK_RepStock PRIMARY KEY(ID_Rep),
 CONSTRAINT FK_RepStock FOREIGN KEY(IDProducto_Rep) REFERENCES Productos(ID_Prod)
 )
+
+--- INSERTS ---
+
+INSERT INTO Roles(Nivel_Rol, Nombre_Rol)
+SELECT 1, 'Invitado' UNION
+SELECT 2, 'Empleado' UNION
+SELECT 3, 'Administrativo'
+
+INSERT INTO Usuarios(Nombre_Usu, Rol_Usu, Password_Usu)
+VALUES('Invitado', 1, '')

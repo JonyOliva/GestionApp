@@ -1,3 +1,8 @@
+.sesion{
+ margin-left: auto;
+font-weight: bold;
+font-size: 1.2rem;
+}
 .nav-btn {
   color: skyblue;
   background-color: #282c34;
