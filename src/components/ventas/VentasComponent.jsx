@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import InvoicesTable from "./InvoicesTable";
-import Tabs from "./Tabs";
+import Tabs from "../otros/Tabs";
 
 class VentasComponent extends Component {
     state = {  }

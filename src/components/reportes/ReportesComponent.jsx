@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ClientesTable from "./ClientesTable";
 import UsuariosTable from "./UsuariosTable";
-import Tabs from "./Tabs";
+import Tabs from "../otros/Tabs";
 
 class ReportesComponent extends Component {
   state = {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
-import DeleteBtn from "./DeleteBtn";
-import EditBtn from "./EditBtn";
+import DeleteBtn from "../otros/DeleteBtn";
+import EditBtn from "../otros/EditBtn";
 
 class ProductsTable extends Component {
   state = {};

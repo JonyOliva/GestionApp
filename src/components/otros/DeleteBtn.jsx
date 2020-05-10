@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import "./buttons.css";
-import deleteImg from "../images/delete.png";
+import deleteImg from "../../images/delete.png";
 
 class DeleteBtn extends Component {
     state = {  }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "./Navbar.css";
+import "../otros/Navbar.css";
 
 class SesionComponent extends Component {
     state = {  }

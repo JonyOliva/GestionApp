@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
-import homeImg from "../images/home.png";
-import buyImg from "../images/buy.png";
-import sellImg from "../images/sell.png";
-import reportImg from "../images/report.png";
-import valueImg from "../images/value.png";
+import homeImg from "../../images/home.png";
+import buyImg from "../../images/buy.png";
+import sellImg from "../../images/sell.png";
+import reportImg from "../../images/report.png";
+import valueImg from "../../images/value.png";
 
-import SesionComponent from './SesionComponent';
+import SesionComponent from '../inicio/SesionComponent';
 
 class Navbar extends Component {
   state = {};

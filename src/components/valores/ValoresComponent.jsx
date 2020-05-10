@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import ProductsTable from "./ProductsTable";
 import CategoriasTable from "./CategoriasTable";
-import Tabs from "./Tabs";
+import Tabs from "../otros/Tabs";
 import ProductForm from "./ProductForm";
-import Buscador from "./Buscador";
+import Buscador from "../otros/Buscador";
 import { Modal, Alert } from "react-bootstrap";
 
 class ValoresComponent extends Component {

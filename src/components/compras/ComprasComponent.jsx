@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Tabs from "./Tabs";
+import Tabs from "../otros/Tabs";
 import ExistenciasTable from "./ExistenciasTable";
 
 class ComprasComponent extends Component {
