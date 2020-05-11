@@ -2,22 +2,22 @@ import React, { Component } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
 class ProductForm extends Component {
-  state = {};
+
   render() {
-    const { product, categorias } = this.props;
+    const { producto, categorias } = this.props;
     return (
       <Form>
         <Form.Group>
           <Form.Label>Nombre</Form.Label>
-          <Form.Control type="text" defaultValue={product.nombreProd} />
+          <Form.Control type="text" defaultValue={producto.nombreProd} />
         </Form.Group>
         <Form.Group>
           <Form.Label>Categoria</Form.Label>
           <Form.Control
             as="select"
             defaultValue={
-              product.idProd !== -1
-                ? categorias.find((e) => e.idCat === product.idcategoriaProd)
+              producto.idProd !== -1
+                ? categorias.find((e) => e.idCat === producto.idcategoriaProd)
                     .idCat
                 : ""
             }
@@ -33,7 +33,7 @@ class ProductForm extends Component {
         </Form.Group>
         <Form.Group>
           <Form.Label>Stock</Form.Label>
-          <Form.Control type="number" defaultValue={product.stockProd} />
+          <Form.Control type="number" defaultValue={producto.stockProd} />
         </Form.Group>
         <Form.Group>
           <Form.Label>Precio</Form.Label>
@@ -41,7 +41,7 @@ class ProductForm extends Component {
             <InputGroup.Prepend>
               <InputGroup.Text>$</InputGroup.Text>
             </InputGroup.Prepend>
-            <Form.Control type="number" defaultValue={product.precioProd} />
+            <Form.Control type="number" defaultValue={producto.precioProd} />
           </InputGroup>
         </Form.Group>
       </Form>

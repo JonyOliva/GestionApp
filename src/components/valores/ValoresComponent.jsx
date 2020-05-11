@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import ProductsTable from "./ProductsTable";
 import CategoriasTable from "./CategoriasTable";
 import Tabs from "../otros/Tabs";
-import ProductForm from "./ProductForm";
-import Buscador from "../otros/Buscador";
-import { Modal, Alert } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 
 class ValoresComponent extends Component {
   state = {
@@ -12,15 +10,12 @@ class ValoresComponent extends Component {
     categorias: [],
     tablas: ["Productos", "Categorias"],
     activo: 0,
-    modalIsOpen: false,
     alert: {
       state: false,
       style: "",
       head: "",
       msg: "",
-    },
-    product: { idProd: 0 },
-    search: ""
+    }
   };
 
   async componentDidMount() {
@@ -69,13 +64,13 @@ class ValoresComponent extends Component {
   }
 
   getCurrentTable = () => {
-    const { activo } = this.state;
+    const { activo, categorias, products } = this.state;
     if (activo === 0) {
       return (
-        <ProductsTable products={this.state.products} onEdit={this.onEdit} search={this.state.search}/>
+        <ProductsTable products={products} categorias={categorias}/>
       );
     } else if (activo === 1) {
-      return <CategoriasTable categorias={this.state.categorias} />;
+      return <CategoriasTable categorias={categorias} />;
     }
   };
 
@@ -83,43 +78,14 @@ class ValoresComponent extends Component {
     this.setState({ activo: index });
   };
 
-  ModalHandle = () => {
-    this.setState({ modalIsOpen: !this.state.modalIsOpen });
-    if(!this.state.modalIsOpen){
-      this.setState({
-        product: {
-          idProd: -1,
-          nombreProd: "",
-          idcategoriaProd: "",
-          stockProd: "",
-          precioProd: ""
-        }})
-    }
-  };
-
-searchHandle = (str)=>{
-  this.setState({search: this.state.search + str});
-}
-
-  onEdit = (_id) => {
-    this.ModalHandle();
-    this.setState({
-      product: this.state.products.find((e) => e.idProd === _id),
-    });
-  };
-
-  onNew  = () => {
-    this.ModalHandle();
-
-  }
-
   AlertHandle = () => {
     const { alert } = this.state;
     this.setState({ alert: { ...alert, state: false } });
   };
 
   render() {
-    const { tablas, activo, modalIsOpen, alert, categorias } = this.state;
+    const { tablas, activo, alert } = this.state;
+    console.log(this.state.products)
     return (
       <div className="container mt-2">
         <h4>Valores</h4>
@@ -128,29 +94,7 @@ searchHandle = (str)=>{
           activo={activo}
           onChange={this.ChangeActiveTab}
         />
-        <div className="row">
-        <Buscador onChange={this.searchHandle} />
-        <button onClick={this.onNew} className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"> Nuevo</button>
-        </div>
         {this.getCurrentTable()}
-
-        <Modal show={modalIsOpen} onHide={this.ModalHandle} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Modificar producto</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <ProductForm product={this.state.product} categorias={categorias} />
-          </Modal.Body>
-          <Modal.Footer>
-            <button className="btn btn-primary btn-sm">Guardar</button>
-            <button
-              onClick={this.ModalHandle}
-              className="btn btn-danger btn-sm"
-            >
-              Cancelar
-            </button>
-          </Modal.Footer>
-        </Modal>
         <div className="w-50 m-auto">
           <Alert
             variant={alert.style}
