@@ -85,7 +85,6 @@ class ValoresComponent extends Component {
 
   render() {
     const { tablas, activo, alert } = this.state;
-    console.log(this.state.products)
     return (
       <div className="container mt-2">
         <h4>Valores</h4>

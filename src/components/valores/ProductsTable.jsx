@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Modal, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
 import Buscador from "../otros/Buscador";
 import Pagination from "../otros/Pagination";
 import ProductForm from "./ProductForm";
+import CustomModal from "../otros/CustomModal";
 
 const PAGTAM = 15;
 
@@ -41,8 +42,8 @@ class ProductsTable extends Component {
   };
 
   pageHandler = (page) => {
-    this.setState({currentPage: this.state.currentPage + page})
-  }
+    this.setState({ currentPage: this.state.currentPage + page });
+  };
 
   searchHandle = (str) => {
     this.setState({ search: str });
@@ -114,35 +115,23 @@ class ProductsTable extends Component {
               })}
           </tbody>
         </Table>
-        <Modal
-          show={modalIsOpen}
-          onHide={() => {
+
+        <CustomModal
+          hide={() => {
             this.setState({ modalIsOpen: false });
           }}
-          centered
+          title={modalHeader + " producto"}
+          isOpen={modalIsOpen}
         >
-          <Modal.Header closeButton>
-            <Modal.Title>{modalHeader} producto</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <ProductForm categorias={categorias} producto={producto} />
-          </Modal.Body>
-          <Modal.Footer>
-            <button className="btn btn-primary btn-sm">Guardar</button>
-            <button
-              onClick={() => {
-                this.setState({ modalIsOpen: false });
-              }}
-              className="btn btn-danger btn-sm"
-            >
-              Cancelar
-            </button>
-          </Modal.Footer>
-        </Modal>
-        <div>
-          <Pagination length={products.length} currentPage={currentPage} pageHandler={this.pageHandler} />
-        </div>
-        <br/>
+          <ProductForm categorias={categorias} producto={producto} />{" "}
+        </CustomModal>
+
+        <Pagination
+          length={products.length}
+          currentPage={currentPage}
+          pageHandler={this.pageHandler}
+        />
+        <br />
       </React.Fragment>
     );
   }

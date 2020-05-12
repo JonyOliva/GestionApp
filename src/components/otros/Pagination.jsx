@@ -10,6 +10,8 @@ class Pagination extends Component {
   };
   render() {
     const { length, currentPage } = this.props;
+    if(length < 1)
+      return null;
     return (
       <div className="row justify-content-around">
         <button
