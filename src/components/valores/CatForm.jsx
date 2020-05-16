@@ -3,17 +3,41 @@ import { Form } from "react-bootstrap";
 
 class CatForm extends Component {
   state = {};
+
+  constructor(){
+    super();
+    this.nombre = React.createRef();
+    this.descrip = React.createRef();
+  }
+
+  onSubmit = (event) => {
+    event.preventDefault();
+    this.props.onSubmit({
+      nombreCat: this.nombre.current.value,
+      descripcionCat: this.descrip.current.value
+    })
+  };
+
   render() {
     return (
-      <Form>
+      <Form onSubmit={this.onSubmit}>
         <Form.Group>
           <Form.Label>Nombre</Form.Label>
-          <Form.Control type="text" defaultValue={this.props.cat.nombreCat}/>
+          <Form.Control ref={this.nombre} type="text" defaultValue={this.props.cat.nombreCat} />
         </Form.Group>
         <Form.Group>
           <Form.Label>Descripción</Form.Label>
-          <Form.Control type="text" defaultValue={this.props.cat.descripcionCat}/>
+          <Form.Control
+            ref={this.descrip}
+            type="text"
+            defaultValue={this.props.cat.descripcionCat}
+          />
         </Form.Group>
+        <hr />
+        <div className="row justify-content-around">
+          <button type="submit" className="btn btn-primary btn-sm ">Guardar</button>
+          <button type="button" className="btn btn-danger btn-sm ">Cancelar</button>
+        </div>
       </Form>
     );
   }

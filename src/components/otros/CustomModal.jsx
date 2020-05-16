@@ -16,15 +16,6 @@ class CustomModal extends Component {
           <Modal.Body>
             {children}
           </Modal.Body>
-          <Modal.Footer>
-            <button className="btn btn-primary btn-sm">Guardar</button>
-            <button
-              onClick={hide}
-              className="btn btn-danger btn-sm"
-            >
-              Cancelar
-            </button>
-          </Modal.Footer>
         </Modal>
          );
     }

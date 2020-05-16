@@ -4,6 +4,9 @@ import CategoriasTable from "./CategoriasTable";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
 
+const CAT_URL = "http://localhost:9090/api/Categorias";
+const PROD_URL = "http://localhost:9090/api/Productos";
+
 class ValoresComponent extends Component {
   state = {
     products: [],
@@ -11,15 +14,16 @@ class ValoresComponent extends Component {
     tablas: ["Productos", "Categorias"],
     activo: 0,
     alert: {
-      state: false,
+      enable: false,
       style: "",
       head: "",
       msg: "",
-    }
+      timerId: undefined
+    },
   };
 
-  async componentDidMount() {
-    await fetch("http://localhost:9090/api/Categorias")
+  getCategorias = async () => {
+    await fetch(CAT_URL)
       .then((response) => {
         return response.json();
       })
@@ -27,17 +31,30 @@ class ValoresComponent extends Component {
         this.setState({ categorias: json });
       })
       .catch((error) => {
-        this.setState({
-          error: {
-            state: true,
-            head: "Error",
-            style: "danger",
-            msg: "No se pudo conectar a la base de datos",
-          },
-        });
+        throw error;
       });
+  };
 
-    await fetch("http://localhost:9090/api/Productos")
+  setAlert = (head, style, msg) => {
+    const {timerId} = this.state.alert;
+    if(timerId !== undefined)
+      clearTimeout(timerId);
+    let timer = setTimeout(this.AlertClose, 3000);
+    this.setState({
+      alert: {
+        enable: true,
+        head: head,
+        style: style,
+        msg: msg,
+        timerId: timer
+      },
+    });
+  };
+
+  getProductos = async () => {
+    if (this.state.categorias.length === 0)
+    throw "no categorias";
+    await fetch(PROD_URL)
       .then((response) => {
         return response.json();
       })
@@ -52,25 +69,53 @@ class ValoresComponent extends Component {
         });
       })
       .catch((error) => {
-        this.setState({
-          alert: {
-            state: true,
-            head: "Error",
-            style: "danger",
-            msg: "No se pudo conectar a la base de datos",
-          },
-        });
+        throw error;
       });
+  };
+
+  async componentDidMount() {
+    this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
+    try {
+      await this.getCategorias();
+      await this.getProductos();
+      this.AlertClose();
+    } catch (error) {
+      console.log(error)
+      this.setAlert(
+        "Error",
+        "danger",
+        "No se pudo conectar a la base de datos"
+      );
+    }
   }
+
+  CategoriasHandler = async (method, cat, id) => {
+    let url = (id!==undefined) ? CAT_URL + "/" + id : CAT_URL
+    await fetch(url, {
+      method: method,
+      body: JSON.stringify(cat),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(() => {
+        this.setAlert("Guardado", "success", "");
+      })
+      .catch((error) => this.setAlert("Error", "danger", ""));
+    await this.getCategorias();
+  };
 
   getCurrentTable = () => {
     const { activo, categorias, products } = this.state;
     if (activo === 0) {
-      return (
-        <ProductsTable products={products} categorias={categorias}/>
-      );
+      return <ProductsTable products={products} categorias={categorias} />;
     } else if (activo === 1) {
-      return <CategoriasTable categorias={categorias} />;
+      return (
+        <CategoriasTable
+          categorias={categorias}
+          postData={this.CategoriasHandler}
+        />
+      );
     }
   };
 
@@ -78,9 +123,9 @@ class ValoresComponent extends Component {
     this.setState({ activo: index });
   };
 
-  AlertHandle = () => {
+  AlertClose = () => {
     const { alert } = this.state;
-    this.setState({ alert: { ...alert, state: false } });
+    this.setState({ alert: { ...alert, enable: false } });
   };
 
   render() {
@@ -88,23 +133,26 @@ class ValoresComponent extends Component {
     return (
       <div className="container mt-2">
         <h4>Valores</h4>
+        <div className="row">
         <Tabs
           headers={tablas}
           activo={activo}
           onChange={this.ChangeActiveTab}
         />
-        {this.getCurrentTable()}
         <div className="w-50 m-auto">
           <Alert
+            className="mb-0"
             variant={alert.style}
-            show={alert.state}
-            onClose={this.AlertHandle}
+            show={alert.enable}
+            onClose={this.AlertClose}
             dismissible
           >
-            <Alert.Heading>{alert.head}</Alert.Heading>
-            <p>{alert.msg}</p>
+            {alert.head} {"  "} 
+            {alert.msg}
           </Alert>
         </div>
+        </div>
+        {this.getCurrentTable()}
       </div>
     );
   }

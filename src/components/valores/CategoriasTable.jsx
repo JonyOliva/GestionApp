@@ -3,17 +3,43 @@ import { Table } from "react-bootstrap";
 import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
 import CustomModal from "../otros/CustomModal";
+import ConfirmationModal from "../otros/ConfirmationModal";
 import CatForm from "./CatForm";
 
 class CategoriasTable extends Component {
   state = {
     modalIsOpen: false,
     modalHeader: "Nuevo",
+    confModal: false,
     categoria: {
-      id: -1,
-      nombre: "",
-      descrip: "",
+      idCat: -1,
+      nombreCat: "",
+      descripcionCat: "",
     },
+  };
+
+  resetCatState = () => {
+    this.setState({
+      categoria: {
+        idCat: -1,
+        nombreCat: "",
+        descripcionCat: "",
+      },
+    });
+  };
+
+  SubmitHandler = (Cat) => {
+    const { categoria } = this.state;
+    if (categoria.idCat === -1) {
+      this.props.postData("POST", Cat);
+    } else {
+      this.props.postData(
+        "PUT",
+        { ...Cat, idCat: categoria.idCat },
+        categoria.idCat
+      );
+    }
+    this.setState({ modalIsOpen: false });
   };
 
   ModalHandle = (_id) => {
@@ -22,26 +48,34 @@ class CategoriasTable extends Component {
     if (_id !== undefined) {
       this.setState({ modalHeader: "Modificar" });
       this.setState({
-        categoria: this.props.categorias.find((e) => e.idCat === _id)
+        categoria: this.props.categorias.find((e) => e.idCat === _id),
       });
     } else {
       this.setState({ modalHeader: "Nuevo" });
+      this.resetCatState();
+    }
+  };
+
+  onDelete = (id) => {
+    if(id){
       this.setState({
-        categoria: {
-          id: -1,
-          nombre: "",
-          descrip: "",
-        },
+        categoria: this.props.categorias.find((e) => e.idCat === id)
       });
+      this.setState({ confModal: true });
+    }else{
+      this.props.postData("DELETE", {}, this.state.categoria.idCat);
+      this.resetCatState();
+      this.setState({ confModal: false });
     }
   };
 
   render() {
+    const {confModal, categoria, modalHeader, modalIsOpen} = this.state;
     return (
       <React.Fragment>
         <div className="row">
           <button
-            onClick={()=>{
+            onClick={() => {
               this.ModalHandle();
             }}
             className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
@@ -72,7 +106,11 @@ class CategoriasTable extends Component {
                         this.ModalHandle(e.idCat);
                       }}
                     />
-                    <DeleteBtn />
+                    <DeleteBtn
+                      onClick={() => {
+                        this.onDelete(e.idCat);
+                      }}
+                    />
                   </td>
                 </tr>
               );
@@ -83,11 +121,19 @@ class CategoriasTable extends Component {
           hide={() => {
             this.setState({ modalIsOpen: false });
           }}
-          title={this.state.modalHeader + " categoria"}
-          isOpen={this.state.modalIsOpen}
+          title={modalHeader + " categoria"}
+          isOpen={modalIsOpen}
         >
-          <CatForm cat={this.state.categoria} />
+          <CatForm cat={categoria} onSubmit={this.SubmitHandler} />
         </CustomModal>
+        <ConfirmationModal
+          show={confModal}
+          hide={() => {
+            this.setState({ confModal: false });
+          }}
+          item={"#" + categoria.idCat + " - " + categoria.nombreCat}
+          confirm={()=>{this.onDelete(undefined)}}
+        ></ConfirmationModal>
       </React.Fragment>
     );
   }
