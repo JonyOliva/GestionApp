@@ -3,10 +3,20 @@ import { Form, InputGroup } from "react-bootstrap";
 
 class ProductForm extends Component {
 
+  onSubmit = (event) => {
+    event.preventDefault();
+    console.log("submit")
+    /*
+    this.props.onSubmit({
+      nombreCat: this.nombre.current.value,
+      descripcionCat: this.descrip.current.value
+    })*/
+  };
+
   render() {
     const { producto, categorias } = this.props;
     return (
-      <Form>
+      <Form onSubmit={this.onSubmit}>
         <Form.Group>
           <Form.Label>Nombre</Form.Label>
           <Form.Control type="text" defaultValue={producto.nombreProd} />
@@ -44,6 +54,10 @@ class ProductForm extends Component {
             <Form.Control type="number" defaultValue={producto.precioProd} />
           </InputGroup>
         </Form.Group>
+        <hr />
+        <div className="row justify-content-around">
+          <button type="submit" className="btn btn-primary btn-sm ">Guardar</button>
+        </div>
       </Form>
     );
   }

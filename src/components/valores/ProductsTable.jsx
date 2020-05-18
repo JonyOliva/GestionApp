@@ -24,21 +24,43 @@ class ProductsTable extends Component {
     },
   };
 
-  ModalHandle = (isNew) => {
+  resetProductState = ()=>{
+    this.setState({
+      producto: {
+        idProd: -1,
+        nombreProd: "",
+        idcategoriaProd: "",
+        stockProd: "",
+        precioProd: "",
+      }
+    });
+  }
+  ModalHandle = (_id) => {
     const { modalIsOpen } = this.state;
     this.setState({ modalIsOpen: !modalIsOpen });
-    this.setState({ modalHeader: isNew === 1 ? "Nuevo" : "Modificar" });
-    if (!modalIsOpen) {
+    if (_id !== undefined) {
+      this.setState({ modalHeader: "Modificar" });
       this.setState({
-        producto: {
-          idProd: -1,
-          nombreProd: "",
-          idcategoriaProd: "",
-          stockProd: "",
-          precioProd: "",
-        },
+        producto: this.props.products.find((e) => e.idProd === _id),
       });
+    } else {
+      this.setState({ modalHeader: "Nuevo" });
+      this.resetProductState();
     }
+  };
+
+  SubmitHandler = (Cat) => {
+    const { categoria } = this.state;
+    if (categoria.idCat === -1) {
+      this.props.postData("POST", Cat);
+    } else {
+      this.props.postData(
+        "PUT",
+        { ...Cat, idCat: categoria.idCat },
+        categoria.idCat
+      );
+    }
+    this.setState({ modalIsOpen: false });
   };
 
   pageHandler = (page) => {
@@ -47,13 +69,6 @@ class ProductsTable extends Component {
 
   searchHandle = (str) => {
     this.setState({ search: str });
-  };
-
-  onEdit = (_id) => {
-    this.ModalHandle();
-    this.setState({
-      producto: this.props.products.find((e) => e.idProd === _id),
-    });
   };
 
   render() {
@@ -71,7 +86,7 @@ class ProductsTable extends Component {
           <Buscador onChange={this.searchHandle} />
           <button
             onClick={() => {
-              this.ModalHandle(1);
+              this.ModalHandle(undefined);
             }}
             className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
           >
@@ -105,7 +120,7 @@ class ProductsTable extends Component {
                     <td align="center">
                       <EditBtn
                         onClick={() => {
-                          this.onEdit(e.idProd);
+                          this.ModalHandle(e.idProd);
                         }}
                       />
                       <DeleteBtn />
@@ -123,7 +138,7 @@ class ProductsTable extends Component {
           title={modalHeader + " producto"}
           isOpen={modalIsOpen}
         >
-          <ProductForm categorias={categorias} producto={producto} />{" "}
+          <ProductForm categorias={categorias} producto={producto} onSubmit={this.SubmitHandler}/>
         </CustomModal>
 
         <Pagination
