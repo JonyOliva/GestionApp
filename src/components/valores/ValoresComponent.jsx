@@ -89,26 +89,39 @@ class ValoresComponent extends Component {
     }
   }
 
-  CategoriasHandler = async (method, cat, id) => {
-    let url = (id!==undefined) ? CAT_URL + "/" + id : CAT_URL
+  FetchData = async (url, method, data) => {
     await fetch(url, {
       method: method,
-      body: JSON.stringify(cat),
+      body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
       },
     })
-      .then(() => {
-        this.setAlert("Guardado", "success", "");
+      .then((resp) => {
+        if(resp.ok)
+          this.setAlert("Guardado", "success", "");
+        else
+          throw "error";
       })
       .catch((error) => this.setAlert("Error", "danger", ""));
+  }
+
+  CategoriasHandler = async (method, cat, id) => {
+    let url = (id!==undefined) ? CAT_URL + "/" + id : CAT_URL;
+    await this.FetchData(url, method, cat);
     await this.getCategorias();
+  };
+
+  ProductosHandler = async (method, prod, id) => {
+    let url = (id!==undefined) ? PROD_URL + "/" + id : PROD_URL
+    await this.FetchData(url, method, prod);
+    await this.getProductos();
   };
 
   getCurrentTable = () => {
     const { activo, categorias, products } = this.state;
     if (activo === 0) {
-      return <ProductsTable products={products} categorias={categorias} />;
+      return <ProductsTable products={products} categorias={categorias} postData={this.ProductosHandler}/>;
     } else if (activo === 1) {
       return (
         <CategoriasTable

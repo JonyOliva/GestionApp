@@ -1,26 +1,23 @@
 import React, { Component } from "react";
 
-const PAGTAM = 15;
 const STYLE = "btn btn-primary btn-sm";
 
 class Pagination extends Component {
-  state = {
-    hasNext: true,
-    hasPrevious: false
-  };
+
   render() {
-    const { length, currentPage } = this.props;
+    const { length, currentPage, pagsize } = this.props;
     if(length < 1)
       return null;
+    let hasPrevious = (currentPage-1) >= 1;
+    let hasNext = currentPage * pagsize <= length;
     return (
       <div className="row justify-content-around">
         <button
           className={STYLE}
           onClick={() => {
             this.props.pageHandler(-1);
-            this.setState({hasPrevious: (currentPage-1) > 1, hasNext: true})
           }}
-          disabled={!this.state.hasPrevious}
+          disabled={!hasPrevious}
         >
           Anterior
         </button>
@@ -29,9 +26,8 @@ class Pagination extends Component {
           className={STYLE}
           onClick={() => {
             this.props.pageHandler(1);
-            this.setState({hasNext: (currentPage+1) * PAGTAM < length, hasPrevious: true})
           }}
-          disabled={!this.state.hasNext}
+          disabled={!hasNext}
         >
           Siguiente
         </button>

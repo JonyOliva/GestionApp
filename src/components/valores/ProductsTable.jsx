@@ -6,6 +6,7 @@ import Buscador from "../otros/Buscador";
 import Pagination from "../otros/Pagination";
 import ProductForm from "./ProductForm";
 import CustomModal from "../otros/CustomModal";
+import ConfirmationModal from "../otros/ConfirmationModal";
 
 const PAGTAM = 15;
 
@@ -14,6 +15,7 @@ class ProductsTable extends Component {
     modalIsOpen: false,
     modalHeader: "Nuevo",
     search: "",
+    confModal: false,
     currentPage: 1,
     producto: {
       idProd: -1,
@@ -49,15 +51,28 @@ class ProductsTable extends Component {
     }
   };
 
-  SubmitHandler = (Cat) => {
-    const { categoria } = this.state;
-    if (categoria.idCat === -1) {
-      this.props.postData("POST", Cat);
+  onDelete = (id) => {
+    if(id){
+      this.setState({
+        producto: this.props.products.find((e) => e.idProd === id)
+      });
+      this.setState({ confModal: true });
+    }else{
+      this.props.postData("DELETE", {}, this.state.producto.idProd);
+      this.resetProductState();
+      this.setState({ confModal: false });
+    }
+  };
+
+  SubmitHandler = (prod) => {
+    const { producto } = this.state;
+    if (producto.idProd === -1) {
+      this.props.postData("POST", prod);
     } else {
       this.props.postData(
         "PUT",
-        { ...Cat, idCat: categoria.idCat },
-        categoria.idCat
+        { ...prod, idProd: producto.idProd },
+        producto.idProd
       );
     }
     this.setState({ modalIsOpen: false });
@@ -69,6 +84,7 @@ class ProductsTable extends Component {
 
   searchHandle = (str) => {
     this.setState({ search: str });
+    this.setState({ currentPage: 1 });
   };
 
   render() {
@@ -79,7 +95,9 @@ class ProductsTable extends Component {
       modalHeader,
       search,
       currentPage,
+      confModal
     } = this.state;
+    let productos = products.filter((e) => e.nombreProd.toLowerCase().includes(search));
     return (
       <React.Fragment>
         <div className="row">
@@ -106,9 +124,8 @@ class ProductsTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {products
-              .slice((currentPage - 1) * PAGTAM, currentPage * PAGTAM - 1)
-              .filter((e) => e.nombreProd.toLowerCase().includes(search))
+            {productos
+              .slice((currentPage - 1) * PAGTAM, currentPage * PAGTAM)
               .map((e, i) => {
                 return (
                   <tr key={i}>
@@ -123,7 +140,11 @@ class ProductsTable extends Component {
                           this.ModalHandle(e.idProd);
                         }}
                       />
-                      <DeleteBtn />
+                      <DeleteBtn 
+                        onClick={() => {
+                          this.onDelete(e.idProd);
+                        }}
+                      />
                     </td>
                   </tr>
                 );
@@ -142,11 +163,20 @@ class ProductsTable extends Component {
         </CustomModal>
 
         <Pagination
-          length={products.length}
+          pagsize={PAGTAM}
+          length={productos.length}
           currentPage={currentPage}
           pageHandler={this.pageHandler}
         />
         <br />
+        <ConfirmationModal
+          show={confModal}
+          hide={() => {
+            this.setState({ confModal: false });
+          }}
+          item={"#" + producto.idProd + " - " + producto.nombreProd}
+          confirm={()=>{this.onDelete(undefined)}}
+        ></ConfirmationModal>
       </React.Fragment>
     );
   }
