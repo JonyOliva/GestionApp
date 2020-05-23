@@ -11,11 +11,7 @@ class CategoriasTable extends Component {
     modalIsOpen: false,
     modalHeader: "Nuevo",
     confModal: false,
-    categoria: {
-      idCat: -1,
-      nombreCat: "",
-      descripcionCat: "",
-    },
+    categoria: {}
   };
 
   resetCatState = () => {

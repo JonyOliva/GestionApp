@@ -17,13 +17,7 @@ class ProductsTable extends Component {
     search: "",
     confModal: false,
     currentPage: 1,
-    producto: {
-      idProd: -1,
-      nombreProd: "",
-      idcategoriaProd: "",
-      stockProd: "",
-      precioProd: "",
-    },
+    producto: {},
   };
 
   resetProductState = ()=>{

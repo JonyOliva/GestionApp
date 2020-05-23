@@ -2,51 +2,134 @@ import React, { Component } from "react";
 import ClientesTable from "./ClientesTable";
 import UsuariosTable from "./UsuariosTable";
 import Tabs from "../otros/Tabs";
+import { Alert } from "react-bootstrap";
+
+const USU_URL = "http://localhost:9090/api/Usuarios";
+const ROL_URL = "http://localhost:9090/api/Roles";
+const CLI_URL = "http://localhost:9090/api/Clientes";
 
 class ReportesComponent extends Component {
   state = {
     clientes: [],
     usuarios: [],
+    roles: [],
     tablas: ["Clientes", "Usuarios"],
     activo: 0,
+    alert: {
+      enable: false,
+      style: "",
+      head: "",
+      msg: "",
+      timerId: undefined,
+    },
+  };
+
+  getCustomers = async () => {
+    await fetch(CLI_URL)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.setState({ clientes: json });
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
+
+  getRoles = async () => {
+    return await fetch(ROL_URL)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.setState({ roles: json });
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
+
+  getUsers = async () => {
+    await fetch(USU_URL)
+      .then((response) => {
+        return response.json();
+      })
+      .then((users) => {
+        this.setState({
+          usuarios: users.map((e) => {
+            let rol = this.state.roles.find(
+              (element) => element.nivelRol === e.rolUsu
+            );
+            return { ...e, nombreRol: rol.nombreRol };
+          }),
+        });
+      })
+      .catch((error) => {
+        throw error;
+      });
   };
 
   async componentDidMount() {
-    let customers = await fetch("http://localhost:9090/api/Clientes")
-    .then((response)=>{
-      return response.json();
-    });
-    if (customers) {
-      this.setState({ clientes: customers });
-    }
-
-    let roles = await fetch("http://localhost:9090/api/Roles")
-    .then((response)=>{
-      return response.json();
-    })
-    
-    let users = await fetch("http://localhost:9090/api/Usuarios")
-    .then((response)=>{
-      return response.json();
-    })
-
-    if(roles && users){
-      this.setState({
-        usuarios: users.map((e) => {
-          let rol = roles.find(
-            (element) => element.nivelRol === e.rolUsu
-          );
-          return { ...e, nombreRol: rol.nombreRol };
-        }),
-      });
+    try {
+      await this.getCustomers();
+      await this.getRoles();
+      await this.getUsers();
+    } catch (error) {
+      console.log(error);
+      this.setAlert(
+        "Error",
+        "danger",
+        "No se pudo conectar a la base de datos"
+      );
     }
   }
 
+  FetchData = async (url, method, data) => {
+    await fetch(url, {
+      method: method,
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => {
+        if (resp.ok) this.setAlert("Guardado", "success", "", true);
+        else throw new Error("error");
+      })
+      .catch((error) => this.setAlert("Error", "danger", "", true));
+  };
+
+  UsuariosHandler = async (method, prod, id) => {
+    let url = (id!==undefined) ? USU_URL + "/" + id : USU_URL
+    await this.FetchData(url, method, prod);
+    await this.getUsers();
+  };
+
+  setAlert = (head, style, msg, timeOut) => {
+    const { timerId } = this.state.alert;
+    if (timerId !== undefined) clearTimeout(timerId);
+    let timer = timeOut ? setTimeout(this.AlertClose, 3000) : undefined;
+    this.setState({
+      alert: {
+        enable: true,
+        head: head,
+        style: style,
+        msg: msg,
+        timerId: timer,
+      },
+    });
+  };
+  AlertClose = () => {
+    const { alert } = this.state;
+    this.setState({ alert: { ...alert, enable: false } });
+  };
   getCurrentTable = () => {
-    if (this.state.activo === 0) {
-      return <ClientesTable clientes={this.state.clientes} />;
-    } else if (this.state.activo === 1) {
-      return <UsuariosTable usuarios={this.state.usuarios} />;
+    const { clientes, usuarios, roles, activo } = this.state;
+    if (activo === 0) {
+      return <ClientesTable clientes={clientes} />;
+    } else if (activo === 1) {
+      return <UsuariosTable usuarios={usuarios} roles={roles} postData={this.UsuariosHandler}/>;
     }
   };
 
@@ -55,15 +138,29 @@ class ReportesComponent extends Component {
   };
 
   render() {
-    const { tablas, activo } = this.state;
+    const { tablas, activo, alert } = this.state;
     return (
       <div className="container mt-2">
         <h4>Reportes</h4>
-        <Tabs
-          headers={tablas}
-          activo={activo}
-          onChange={this.ChangeActiveTab}
-        />
+        <div className="row">
+          <Tabs
+            headers={tablas}
+            activo={activo}
+            onChange={this.ChangeActiveTab}
+          />
+          <div className="w-50 m-auto">
+            <Alert
+              className="mb-0"
+              variant={alert.style}
+              show={alert.enable}
+              onClose={this.AlertClose}
+              dismissible
+            >
+              {alert.head} {"  "}
+              {alert.msg}
+            </Alert>
+          </div>
+        </div>
         {this.getCurrentTable()}
       </div>
     );

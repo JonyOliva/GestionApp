@@ -35,11 +35,11 @@ class ValoresComponent extends Component {
       });
   };
 
-  setAlert = (head, style, msg) => {
+  setAlert = (head, style, msg, timeOut) => {
     const {timerId} = this.state.alert;
     if(timerId !== undefined)
       clearTimeout(timerId);
-    let timer = setTimeout(this.AlertClose, 3000);
+    let timer = (timeOut) ? setTimeout(this.AlertClose, 3000) : undefined;
     this.setState({
       alert: {
         enable: true,
@@ -53,7 +53,7 @@ class ValoresComponent extends Component {
 
   getProductos = async () => {
     if (this.state.categorias.length === 0)
-    throw "no categorias";
+    throw new Error("no categorias");
     await fetch(PROD_URL)
       .then((response) => {
         return response.json();
@@ -99,11 +99,11 @@ class ValoresComponent extends Component {
     })
       .then((resp) => {
         if(resp.ok)
-          this.setAlert("Guardado", "success", "");
+          this.setAlert("Guardado", "success", "", true);
         else
-          throw "error";
+          throw new Error("error");
       })
-      .catch((error) => this.setAlert("Error", "danger", ""));
+      .catch((error) => this.setAlert("Error", "danger", "", true));
   }
 
   CategoriasHandler = async (method, cat, id) => {
