@@ -89,16 +89,21 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Categorias>> DeleteCategorias(int id)
         {
-            var categorias = await _context.Categorias.FindAsync(id);
-            if (categorias == null)
+            var categoria = await _context.Categorias.FindAsync(id);
+            if (categoria == null)
             {
                 return NotFound();
             }
 
-            _context.Categorias.Remove(categorias);
+            Productos[] prods = _context.Productos.Where(x => x.IdcategoriaProd == categoria.IdCat).ToArray();
+            foreach (var item in prods)
+            {
+                item.IdcategoriaProd = null;
+            }
             await _context.SaveChangesAsync();
-
-            return categorias;
+            _context.Categorias.Remove(categoria);
+            await _context.SaveChangesAsync();
+            return categoria;
         }
 
         private bool CategoriasExists(int id)

@@ -8,8 +8,8 @@ class Pagination extends Component {
     const { length, currentPage, pagsize } = this.props;
     if(length < 1)
       return null;
-    let hasPrevious = (currentPage-1) >= 1;
-    let hasNext = currentPage * pagsize <= length;
+    let hasPrevious = currentPage > 1;
+    let hasNext = currentPage * pagsize < length;
     return (
       <div className="row justify-content-around">
         <button

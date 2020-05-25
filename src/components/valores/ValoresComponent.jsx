@@ -64,7 +64,7 @@ class ValoresComponent extends Component {
             let categoria = this.state.categorias.find(
               (cat) => cat.idCat === e.idcategoriaProd
             );
-            return { ...e, nombreCat: categoria.nombreCat };
+            return { ...e, nombreCat: (categoria) ? categoria.nombreCat : "Sin categoria" };
           }),
         });
       })
@@ -80,7 +80,6 @@ class ValoresComponent extends Component {
       await this.getProductos();
       this.AlertClose();
     } catch (error) {
-      console.log(error)
       this.setAlert(
         "Error",
         "danger",
@@ -108,14 +107,35 @@ class ValoresComponent extends Component {
 
   CategoriasHandler = async (method, cat, id) => {
     let url = (id!==undefined) ? CAT_URL + "/" + id : CAT_URL;
-    await this.FetchData(url, method, cat);
-    await this.getCategorias();
+    this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
+    try {
+      await this.FetchData(url, method, cat);
+      await this.getCategorias();
+      await this.getProductos();
+      this.AlertClose();
+    } catch (error) {
+      this.setAlert(
+        "Error",
+        "danger",
+        "No se pudo conectar a la base de datos"
+      );
+    }
   };
 
   ProductosHandler = async (method, prod, id) => {
     let url = (id!==undefined) ? PROD_URL + "/" + id : PROD_URL
-    await this.FetchData(url, method, prod);
-    await this.getProductos();
+    this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
+    try {
+      await this.FetchData(url, method, prod);
+      await this.getProductos();
+      this.AlertClose();
+    } catch (error) {
+      this.setAlert(
+        "Error",
+        "danger",
+        "No se pudo conectar a la base de datos"
+      );
+    }
   };
 
   getCurrentTable = () => {

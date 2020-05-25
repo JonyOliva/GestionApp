@@ -55,6 +55,7 @@ class ProductsTable extends Component {
       this.props.postData("DELETE", {}, this.state.producto.idProd);
       this.resetProductState();
       this.setState({ confModal: false });
+      this.setState({ currentPage: 1 });
     }
   };
 
