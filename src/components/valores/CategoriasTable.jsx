@@ -66,6 +66,7 @@ class CategoriasTable extends Component {
   };
 
   render() {
+    console.log(this.context)
     const {confModal, categoria, modalHeader, modalIsOpen} = this.state;
     return (
       <React.Fragment>

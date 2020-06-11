@@ -6,8 +6,7 @@ import buyImg from "../../images/buy.png";
 import sellImg from "../../images/sell.png";
 import reportImg from "../../images/report.png";
 import valueImg from "../../images/value.png";
-
-import SesionComponent from '../inicio/SesionComponent';
+import UserInfo from "../inicio/UserInfo"
 
 class Navbar extends Component {
   state = {};
@@ -40,7 +39,8 @@ class Navbar extends Component {
           <img className="nav-icon" src={reportImg} alt="reportes"></img>
           <div className="nav-item">Reportes</div>
         </Link>
-        <SesionComponent />
+        <UserInfo />
+
       </nav>
     );
   }

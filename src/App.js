@@ -7,10 +7,12 @@ import ValoresComponent from "./components/valores/ValoresComponent";
 import ComprasComponent from "./components/compras/ComprasComponent";
 import VentasComponent from "./components/ventas/VentasComponent";
 import ReportesComponent from "./components/reportes/ReportesComponent";
+import SesionComponent from "./components/inicio/SesionComponent";
 import "./App.css";
 
 function App() {
   return (
+    <SesionComponent>
     <Router>
       <Route path="/">
         <Navbar>Gestion App</Navbar>
@@ -31,6 +33,7 @@ function App() {
         <ReportesComponent />
       </Route>
     </Router>
+    </SesionComponent>
   );
 }
 

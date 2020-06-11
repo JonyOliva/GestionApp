@@ -1,10 +1,15 @@
 .head-session{
     background-color: #282c34;
-    margin-top: 2em;
-    margin-left: 2em;
-    margin-right: 2em;
-    border-radius: 1%;
     text-align: center;
+    color: white;
+    padding: .25rem;
+}
+
+.border-home{
+    border-style: solid;
+    border-color: #282c34;
+    border-radius: .25rem;
+    border-width: 2px;
 }
 
 .text-session{

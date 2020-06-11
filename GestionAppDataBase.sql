@@ -9,7 +9,7 @@ CREATE TABLE Usuarios(
 ID_Usu int identity,
 Nombre_Usu varchar(20) not null,
 Rol_Usu tinyint not null,
-Password_Usu varchar(35) not null,
+Password_Usu varchar(100) not null,
 CONSTRAINT PK_Usuarios PRIMARY KEY(ID_Usu),
 CONSTRAINT FK_Rol FOREIGN KEY(Rol_Usu) REFERENCES Roles(Nivel_Rol)
 )
