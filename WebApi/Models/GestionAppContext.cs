@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace GestionAppWebApi.Models
 {
@@ -10,11 +11,12 @@ namespace GestionAppWebApi.Models
         {
         }
 
-        public GestionAppContext(DbContextOptions<GestionAppContext> options)
+        public GestionAppContext(DbContextOptions<GestionAppContext> options, IConfiguration configuration)
             : base(options)
         {
+            Configuration = configuration;
         }
-
+        public IConfiguration Configuration;
         public virtual DbSet<Categorias> Categorias { get; set; }
         public virtual DbSet<Clientes> Clientes { get; set; }
         public virtual DbSet<DetallesFactura> DetallesFactura { get; set; }
@@ -28,8 +30,7 @@ namespace GestionAppWebApi.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=.;Database=GestionApp;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(Configuration.GetConnectionString("GestionAppDB"));
             }
         }
 

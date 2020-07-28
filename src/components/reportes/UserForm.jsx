@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import SimpleReactValidator from "simple-react-validator";
-import bcrypt from 'bcryptjs';
 
 class UserForm extends Component {
 
@@ -27,11 +26,10 @@ class UserForm extends Component {
     const {nombre, rol, pass} = this.state;
     event.preventDefault();
     if(this.validator.allValid()){
-      let passEncript = bcrypt.hashSync(pass);
       this.props.onSubmit({
         nombreUsu: nombre,
         rolUsu: rol,
-        passwordUsu: passEncript
+        passwordUsu: pass
       })
     }else{
       this.validator.showMessages();

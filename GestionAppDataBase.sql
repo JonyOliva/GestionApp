@@ -33,7 +33,7 @@ CONSTRAINT PK_Cliente PRIMARY KEY(ID_Cli)
 CREATE TABLE Productos(
 ID_Prod int identity,
 Precio_Prod float check(Precio_Prod > 0) not null,
-Nombre_Prod varchar(40) not null,
+Nombre_Prod varchar(60) not null,
 IDCategoria_Prod int,
 Stock_Prod int check(Stock_Prod > 0) not null
 CONSTRAINT PK_Productos PRIMARY KEY(ID_Prod),

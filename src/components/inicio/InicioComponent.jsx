@@ -7,10 +7,25 @@ class InicioComponent extends Component {
   static contextType = SesionContext;
   state = {};
 
+  FetchData = async (url, method, data) => {
+    return await fetch(url, {
+      method: method,
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => {
+        if (resp.ok) return resp.json();
+        else throw new Error("error");
+      })
+      .catch((error) => this.setAlert("Error", "danger", "", true));
+  };
+
   showCurrentSession = () => {
     let component = (this.context.sesion) ? 
     <p className="text-session"> Usted ha iniciado sesión como {this.context.nombre}</p> :
-    <LoginForm />
+    <LoginForm postData={this.FetchData} />
     return component;
   }
 
