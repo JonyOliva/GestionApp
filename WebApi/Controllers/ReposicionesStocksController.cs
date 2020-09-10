@@ -24,6 +24,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReposicionesStock>>> GetReposicionesStock()
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             return await _context.ReposicionesStock.ToListAsync();
         }
 
@@ -31,6 +33,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReposicionesStock>> GetReposicionesStock(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var reposicionesStock = await _context.ReposicionesStock.FindAsync(id);
 
             if (reposicionesStock == null)
@@ -47,6 +51,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReposicionesStock(int id, ReposicionesStock reposicionesStock)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             if (id != reposicionesStock.IdRep)
             {
                 return BadRequest();
@@ -79,6 +85,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ReposicionesStock>> PostReposicionesStock(ReposicionesStock reposicionesStock)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             _context.ReposicionesStock.Add(reposicionesStock);
             await _context.SaveChangesAsync();
 
@@ -89,6 +97,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ReposicionesStock>> DeleteReposicionesStock(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             var reposicionesStock = await _context.ReposicionesStock.FindAsync(id);
             if (reposicionesStock == null)
             {

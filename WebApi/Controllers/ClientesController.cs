@@ -31,6 +31,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Clientes>> GetClientes(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var clientes = await _context.Clientes.FindAsync(id);
 
             if (clientes == null)
@@ -47,6 +49,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClientes(int id, Clientes clientes)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             if (id != clientes.IdCli)
             {
                 return BadRequest();
@@ -79,6 +83,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             _context.Clientes.Add(clientes);
             await _context.SaveChangesAsync();
 
@@ -89,6 +95,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Clientes>> DeleteClientes(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             var clientes = await _context.Clientes.FindAsync(id);
             if (clientes == null)
             {

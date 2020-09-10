@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import ProductsTable from "./ProductsTable";
 import CategoriasTable from "./CategoriasTable";
+import {SesionContext} from "../inicio/SesionComponent";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
-
-const CAT_URL = "http://localhost:9090/api/Categorias";
-const PROD_URL = "http://localhost:9090/api/Productos";
+import {CAT_URL, PROD_URL} from "../../Constants";
+import {FetchData} from "../DataFunc";
 
 class ValoresComponent extends Component {
+  static contextType = SesionContext;
   state = {
     products: [],
     categorias: [],
@@ -81,41 +82,24 @@ class ValoresComponent extends Component {
       this.AlertClose();
     } catch (error) {
       this.setAlert(
-        "Error",
+        "Error:",
         "danger",
         "No se pudo conectar a la base de datos"
       );
     }
   }
 
-  FetchData = async (url, method, data) => {
-    await fetch(url, {
-      method: method,
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((resp) => {
-        if(resp.ok)
-          this.setAlert("Guardado", "success", "", true);
-        else
-          throw new Error("error");
-      })
-      .catch((error) => this.setAlert("Error", "danger", "", true));
-  }
-
   CategoriasHandler = async (method, cat, id) => {
     let url = (id!==undefined) ? CAT_URL + "/" + id : CAT_URL;
     this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
     try {
-      await this.FetchData(url, method, cat);
+      await FetchData(url, method, this.context.headers(), cat, this.setAlert);
       await this.getCategorias();
       await this.getProductos();
-      this.AlertClose();
+      //this.AlertClose();
     } catch (error) {
       this.setAlert(
-        "Error",
+        "Error:",
         "danger",
         "No se pudo conectar a la base de datos"
       );
@@ -126,12 +110,12 @@ class ValoresComponent extends Component {
     let url = (id!==undefined) ? PROD_URL + "/" + id : PROD_URL
     this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
     try {
-      await this.FetchData(url, method, prod);
+      await FetchData(url, method, this.context.headers(), prod, this.setAlert);
       await this.getProductos();
-      this.AlertClose();
+      //this.AlertClose();
     } catch (error) {
       this.setAlert(
-        "Error",
+        "Error:",
         "danger",
         "No se pudo conectar a la base de datos"
       );

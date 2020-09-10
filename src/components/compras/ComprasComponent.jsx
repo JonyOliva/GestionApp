@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import Tabs from "../otros/Tabs";
 import ExistenciasTable from "./ExistenciasTable";
+import {PROD_URL, RSTOCK_URL} from "../../Constants";
 
 class ComprasComponent extends Component {
   state = { existencias: [] };
 
   async componentDidMount() {
-    let res = await fetch("http://localhost:9090/api/Productos");
+    let res = await fetch(PROD_URL);
     if (res.ok) {
       let pjson = await res.json();
       this.setState({ products: pjson });
     }
 
-    res = await fetch("http://localhost:9090/api/ReposicionesStocks");
+    res = await fetch(RSTOCK_URL);
     if (res.ok) {
       let json = await res.json();
       this.setState({

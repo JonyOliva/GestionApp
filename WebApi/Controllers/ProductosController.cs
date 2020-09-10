@@ -24,6 +24,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Productos>>> GetProductos()
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             return await _context.Productos.ToListAsync();
         }
 
@@ -31,6 +33,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Productos>> GetProductos(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var productos = await _context.Productos.FindAsync(id);
 
             if (productos == null)
@@ -47,6 +51,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductos(int id, Productos productos)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             if (id != productos.IdProd)
             {
                 return BadRequest();
@@ -79,6 +85,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Productos>> PostProductos(Productos productos)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             _context.Productos.Add(productos);
             await _context.SaveChangesAsync();
 
@@ -89,6 +97,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Productos>> DeleteProductos(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             var productos = await _context.Productos.FindAsync(id);
             if (productos == null)
             {

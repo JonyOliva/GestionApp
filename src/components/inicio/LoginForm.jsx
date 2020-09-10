@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import SimpleReactValidator from "simple-react-validator";
 import { SesionContext } from "./SesionComponent";
+import { LOGIN_URL } from "../../Constants";
 
 class LoginForm extends Component {
   static contextType = SesionContext;
@@ -19,10 +20,25 @@ class LoginForm extends Component {
     const { nombre, pass } = this.state;
     event.preventDefault();
     if (this.validator.allValid()) {
-      let resp = await this.props.postData("http://localhost:9090/api/login", "POST", { nombreUsu: nombre, passwordUsu: pass });
-      if(resp.state === "Logged"){
-        this.context.login(nombre, resp.token);
-      }
+      let resp = await fetch(LOGIN_URL, {
+        method: "POST",
+        body: JSON.stringify({ nombreUsu: nombre, passwordUsu: pass }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          else throw new Error("error");
+        })
+        .catch((error) => { console.log(error) });
+        if(resp){
+          if (resp.state === "Logged") {
+            this.context.login(nombre, "Bearer " + resp.token);
+          }
+        }
     } else {
       this.validator.showMessages();
       this.forceUpdate();

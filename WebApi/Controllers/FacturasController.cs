@@ -24,6 +24,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Facturas>>> GetFacturas()
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             return await _context.Facturas.ToListAsync();
         }
 
@@ -31,6 +33,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Facturas>> GetFacturas(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var facturas = await _context.Facturas.FindAsync(id);
 
             if (facturas == null)
@@ -47,6 +51,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFacturas(int id, Facturas facturas)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             if (id != facturas.IdFac)
             {
                 return BadRequest();
@@ -79,6 +85,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Facturas>> PostFacturas(Facturas facturas)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             _context.Facturas.Add(facturas);
             await _context.SaveChangesAsync();
 
@@ -89,6 +97,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Facturas>> DeleteFacturas(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             var facturas = await _context.Facturas.FindAsync(id);
             if (facturas == null)
             {

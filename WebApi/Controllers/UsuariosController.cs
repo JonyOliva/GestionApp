@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionAppWebApi.Models;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Claims;
+using System.ComponentModel;
 
 namespace GestionAppWebApi.Controllers
 {
@@ -25,6 +27,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             return await _context.Usuarios.ToListAsync();
         }
 
@@ -32,6 +36,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Usuarios>> GetUsuarios(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var usuarios = await _context.Usuarios.FindAsync(id);
 
             if (usuarios == null)
@@ -48,6 +54,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuarios(int id, Usuarios usuarios)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             if (id != usuarios.IdUsu)
             {
                 return BadRequest();
@@ -80,6 +88,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             _context.Usuarios.Add(usuarios);
             await _context.SaveChangesAsync();
 
@@ -90,6 +100,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Usuarios>> DeleteUsuarios(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             var usuarios = await _context.Usuarios.FindAsync(id);
             if (usuarios == null)
             {
@@ -106,5 +118,6 @@ namespace GestionAppWebApi.Controllers
         {
             return _context.Usuarios.Any(e => e.IdUsu == id);
         }
+
     }
 }

@@ -14,8 +14,16 @@ class SesionComponent extends Component {
     this.setState({sesion: true, nombre: nombre, token: token});
   }
 
+  getHeaders = () => {
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    if(this.state.sesion)
+    headers.append('Authorization', this.state.token);
+    return headers;
+  }
+
   render() {
-    return <SesionContext.Provider value={{...this.state, login: this.login}}>
+    return <SesionContext.Provider value={{...this.state, login: this.login, headers: this.getHeaders}}>
         {this.props.children}
     </SesionContext.Provider>;
   }

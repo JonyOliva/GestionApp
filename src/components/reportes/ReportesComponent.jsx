@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import ClientesTable from "./ClientesTable";
 import UsuariosTable from "./UsuariosTable";
+import {SesionContext} from "../inicio/SesionComponent";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
-
-const USU_URL = "http://localhost:9090/api/Usuarios";
-const ROL_URL = "http://localhost:9090/api/Roles";
-const CLI_URL = "http://localhost:9090/api/Clientes";
+import {USU_URL, ROL_URL, CLI_URL} from "../../Constants";
+import {FetchData} from "../DataFunc";
 
 class ReportesComponent extends Component {
+  static contextType = SesionContext;
   state = {
     clientes: [],
     usuarios: [],
@@ -51,8 +51,10 @@ class ReportesComponent extends Component {
   };
 
   getUsers = async () => {
-    await fetch(USU_URL)
+    await fetch(USU_URL, {method: "GET", headers: this.context.headers})
       .then((response) => {
+        if(response.status === 401)  
+        throw new Error("No posee los privilegios para realizar esta acción");
         return response.json();
       })
       .then((users) => {
@@ -76,33 +78,17 @@ class ReportesComponent extends Component {
       await this.getRoles();
       await this.getUsers();
     } catch (error) {
-      console.log(error);
       this.setAlert(
-        "Error",
+        "Error: ",
         "danger",
-        "No se pudo conectar a la base de datos"
+        error.message
       );
     }
   }
 
-  FetchData = async (url, method, data) => {
-    await fetch(url, {
-      method: method,
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((resp) => {
-        if (resp.ok) this.setAlert("Guardado", "success", "", true);
-        else throw new Error("error");
-      })
-      .catch((error) => this.setAlert("Error", "danger", "", true));
-  };
-
   UsuariosHandler = async (method, prod, id) => {
     let url = (id!==undefined) ? USU_URL + "/" + id : USU_URL
-    await this.FetchData(url, method, prod);
+    await FetchData(url, method, this.context.headers(), prod, this.setAlert);
     await this.getUsers();
   };
 

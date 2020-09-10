@@ -24,6 +24,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Roles>>> GetRoles()
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             return await _context.Roles.ToListAsync();
         }
 
@@ -31,6 +33,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Roles>> GetRoles(byte id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var roles = await _context.Roles.FindAsync(id);
 
             if (roles == null)
@@ -47,6 +51,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoles(byte id, Roles roles)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             if (id != roles.NivelRol)
             {
                 return BadRequest();
@@ -79,6 +85,9 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Roles>> PostRoles(Roles roles)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
+
             _context.Roles.Add(roles);
             try
             {
@@ -103,6 +112,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Roles>> DeleteRoles(byte id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 3))
+                return Unauthorized();
             var roles = await _context.Roles.FindAsync(id);
             if (roles == null)
             {

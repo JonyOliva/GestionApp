@@ -24,6 +24,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             return await _context.Categorias.ToListAsync();
         }
 
@@ -31,6 +33,8 @@ namespace GestionAppWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Categorias>> GetCategorias(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 1))
+                return Unauthorized();
             var categorias = await _context.Categorias.FindAsync(id);
 
             if (categorias == null)
@@ -47,6 +51,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategorias(int id, Categorias categorias)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             if (id != categorias.IdCat)
             {
                 return BadRequest();
@@ -79,6 +85,8 @@ namespace GestionAppWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Categorias>> PostCategorias(Categorias categorias)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             _context.Categorias.Add(categorias);
             await _context.SaveChangesAsync();
 
@@ -89,6 +97,8 @@ namespace GestionAppWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Categorias>> DeleteCategorias(int id)
         {
+            if (Utilities.checkUnauthorized(HttpContext, 2))
+                return Unauthorized();
             var categoria = await _context.Categorias.FindAsync(id);
             if (categoria == null)
             {
