@@ -25,7 +25,7 @@ class ReportesComponent extends Component {
   };
 
   getCustomers = async () => {
-    await fetch(CLI_URL)
+    await fetch(CLI_URL, {method: "GET", headers: this.context.headers})
       .then((response) => {
         return response.json();
       })
@@ -38,7 +38,7 @@ class ReportesComponent extends Component {
   };
 
   getRoles = async () => {
-    return await fetch(ROL_URL)
+    return await fetch(ROL_URL, {method: "GET", headers: this.context.headers})
       .then((response) => {
         return response.json();
       })
@@ -92,6 +92,12 @@ class ReportesComponent extends Component {
     await this.getUsers();
   };
 
+  ClientesHandler = async (method, cl, id) => {
+    let url = (id!==undefined) ? CLI_URL + "/" + id : CLI_URL
+    await FetchData(url, method, this.context.headers(), cl, this.setAlert);
+    await this.getCustomers();
+  };
+
   setAlert = (head, style, msg, timeOut) => {
     const { timerId } = this.state.alert;
     if (timerId !== undefined) clearTimeout(timerId);
@@ -113,7 +119,7 @@ class ReportesComponent extends Component {
   getCurrentTable = () => {
     const { clientes, usuarios, roles, activo } = this.state;
     if (activo === 0) {
-      return <ClientesTable clientes={clientes} />;
+      return <ClientesTable clientes={clientes} postData={this.ClientesHandler} />;
     } else if (activo === 1) {
       return <UsuariosTable usuarios={usuarios} roles={roles} postData={this.UsuariosHandler}/>;
     }

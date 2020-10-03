@@ -5,3 +5,5 @@ export const CAT_URL = "http://localhost:9090/api/Categorias";
 export const PROD_URL = "http://localhost:9090/api/Productos";
 export const RSTOCK_URL = "http://localhost:9090/api/ReposicionesStocks";
 export const LOGIN_URL = "http://localhost:9090/api/login";
+
+//http://localhost:51503
