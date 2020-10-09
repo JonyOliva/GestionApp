@@ -150,7 +150,6 @@ class ValoresComponent extends Component {
     return (
       <div className="container mt-2">
         <h4>Valores</h4>
-        <div className="row">
         <Tabs
           headers={tablas}
           activo={activo}
@@ -167,7 +166,6 @@ class ValoresComponent extends Component {
             {alert.head} {"  "} 
             {alert.msg}
           </Alert>
-        </div>
         </div>
         {this.getCurrentTable()}
       </div>

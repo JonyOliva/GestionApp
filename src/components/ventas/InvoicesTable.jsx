@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Table } from "react-bootstrap";
+import CustomModal from '../otros/CustomModal';
 import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
+import InvoiceForm from './InvoiceForm';
 
 const facs = [
   {
@@ -28,40 +30,96 @@ const facs = [
 ];
 
 class InvoicesTable extends Component {
-    state = {  }
-    render() { 
-        return (
-          <Table bordered striped hover>
-            <thead>
-              <tr>
-                <th># ID Factura</th>
-                <th># ID Cliente</th>
-                <th>Fecha</th>
-                <th>Descuento</th>
-                <th>Total</th>
-                <th width="12%"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {facs.map((e, i) => {
-                return (
-                  <tr key={i}>
-                    <td>{e.idf}</td>
-                    <td>{e.idc}</td>
-                    <td>{e.fecha}</td>
-                    <td>{e.desc > 0 ? e.desc + "%" : "-"}</td>
-                    <td>${e.total}</td>
-                    <td align="center">
-                      <EditBtn />
-                      <DeleteBtn />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        );
+  state = {
+    modalIsOpen: false,
+    modalHeader: "Nuevo",
+    factura: {}
+  }
+
+  resetState = () => {
+    this.setState({
+      factura: {
+        idFac: -1,
+        IdclienteFac: undefined,
+        FechaFac: undefined,
+        DescuentoFac: undefined,
+        TotalFac: undefined
+      }
+    })
+  }
+
+  ModalHandle = (_id) => {
+    const { modalIsOpen } = this.state;
+    this.setState({ modalIsOpen: !modalIsOpen });
+    if (_id !== undefined) {
+      this.setState({ modalHeader: "Modificar" });
+      this.setState({
+        factura: this.props.facturas.find((e) => e.idProd === _id),
+      });
+    } else {
+      this.setState({ modalHeader: "Nuevo" });
+      this.resetState();
     }
+  };
+
+  render() {
+    const {modalHeader, modalIsOpen, factura} = this.state;
+    return (
+      <React.Fragment>
+        <div className="row">
+          <div className="mb-2 mt-2 ml-4 mr-auto">
+            <input type="date" className="mr-2" />
+            <input type="date" />
+          </div>
+          <button
+            onClick={() => {
+              this.ModalHandle(undefined);
+            }}
+            className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
+          >
+            {" "}
+            Nuevo
+          </button>
+        </div>
+        <Table bordered striped hover>
+          <thead>
+            <tr>
+              <th># ID Factura</th>
+              <th># ID Cliente</th>
+              <th>Fecha</th>
+              <th>Descuento</th>
+              <th>Total</th>
+              <th width="12%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {facs.map((e, i) => {
+              return (
+                <tr key={i}>
+                  <td>{e.idf}</td>
+                  <td>{e.idc}</td>
+                  <td>{e.fecha}</td>
+                  <td>{e.desc > 0 ? e.desc + "%" : "-"}</td>
+                  <td>${e.total}</td>
+                  <td align="center">
+                    <EditBtn />
+                    <DeleteBtn />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+        <CustomModal hide={() => {
+          this.setState({ modalIsOpen: false });
+        }}
+          title={modalHeader + " factura"}
+          isOpen={modalIsOpen}>
+            <InvoiceForm factura={factura}/>
+        </CustomModal>
+      </React.Fragment>
+    );
+  }
 }
- 
+
 export default InvoicesTable;
