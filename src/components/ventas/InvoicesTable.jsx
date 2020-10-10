@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table } from "react-bootstrap";
 import CustomModal from '../otros/CustomModal';
+import DateBetween from '../otros/DateBetween';
 import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
 import InvoiceForm from './InvoiceForm';
@@ -33,7 +34,16 @@ class InvoicesTable extends Component {
   state = {
     modalIsOpen: false,
     modalHeader: "Nuevo",
-    factura: {}
+    factura: {},
+    filtroFecha:{
+      desde: "",
+      hasta: ""
+    }
+  }
+
+  changeDate = (_name, value) => {
+    this.setState({filtroFecha:{...this.state.filtroFecha, [_name]: value}})
+    console.log(this.state.filtroFecha)
   }
 
   resetState = () => {
@@ -63,13 +73,12 @@ class InvoicesTable extends Component {
   };
 
   render() {
-    const {modalHeader, modalIsOpen, factura} = this.state;
+    const {modalHeader, modalIsOpen, factura, filtroFecha} = this.state;
     return (
       <React.Fragment>
         <div className="row">
-          <div className="mb-2 mt-2 ml-4 mr-auto">
-            <input type="date" className="mr-2" />
-            <input type="date" />
+          <div className="mb-2 mt-2 ml-3 mr-auto">
+            <DateBetween changeDate={this.changeDate} dates={filtroFecha}/>
           </div>
           <button
             onClick={() => {
