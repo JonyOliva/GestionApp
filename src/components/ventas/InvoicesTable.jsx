@@ -33,8 +33,14 @@ const facs = [
 class InvoicesTable extends Component {
   state = {
     modalIsOpen: false,
-    modalHeader: "Nuevo",
-    factura: {},
+    modalHeader: "Nueva",
+    factura: {
+      idFac: -1,
+      IdclienteFac: undefined,
+      FechaFac: undefined,
+      DescuentoFac: undefined,
+      TotalFac: undefined
+    },
     filtroFecha:{
       desde: "",
       hasta: ""
@@ -67,7 +73,7 @@ class InvoicesTable extends Component {
         factura: this.props.facturas.find((e) => e.idProd === _id),
       });
     } else {
-      this.setState({ modalHeader: "Nuevo" });
+      this.setState({ modalHeader: "Nueva" });
       this.resetState();
     }
   };
@@ -122,6 +128,7 @@ class InvoicesTable extends Component {
         <CustomModal hide={() => {
           this.setState({ modalIsOpen: false });
         }}
+          size={"lg"}
           title={modalHeader + " factura"}
           isOpen={modalIsOpen}>
             <InvoiceForm factura={factura}/>
