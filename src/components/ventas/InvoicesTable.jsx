@@ -34,13 +34,6 @@ class InvoicesTable extends Component {
   state = {
     modalIsOpen: false,
     modalHeader: "Nueva",
-    factura: {
-      idFac: -1,
-      IdclienteFac: undefined,
-      FechaFac: undefined,
-      DescuentoFac: undefined,
-      TotalFac: undefined
-    },
     filtroFecha:{
       desde: "",
       hasta: ""
@@ -79,7 +72,7 @@ class InvoicesTable extends Component {
   };
 
   render() {
-    const {modalHeader, modalIsOpen, factura, filtroFecha} = this.state;
+    const {modalHeader, modalIsOpen, filtroFecha} = this.state;
     return (
       <React.Fragment>
         <div className="row">
@@ -129,9 +122,10 @@ class InvoicesTable extends Component {
           this.setState({ modalIsOpen: false });
         }}
           size={"lg"}
+          backdrop={"static"}
           title={modalHeader + " factura"}
           isOpen={modalIsOpen}>
-            <InvoiceForm factura={factura}/>
+            <InvoiceForm/>
         </CustomModal>
       </React.Fragment>
     );
