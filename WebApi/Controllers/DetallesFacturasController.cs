@@ -88,6 +88,8 @@ namespace GestionAppWebApi.Controllers
             if (Utilities.checkUnauthorized(HttpContext, 3))
                 return Unauthorized();
             _context.DetallesFactura.Add(detallesFactura);
+            Productos prod = _context.Productos.Find(detallesFactura.IdproductoDet);
+            prod.StockProd = prod.StockProd - (int)detallesFactura.CantidadDet;
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetDetallesFactura", new { id = detallesFactura.IdDet }, detallesFactura);
@@ -104,7 +106,8 @@ namespace GestionAppWebApi.Controllers
             {
                 return NotFound();
             }
-
+            Productos prod = _context.Productos.Find(detallesFactura.IdproductoDet);
+            prod.StockProd = prod.StockProd + (int)detallesFactura.CantidadDet;
             _context.DetallesFactura.Remove(detallesFactura);
             await _context.SaveChangesAsync();
 

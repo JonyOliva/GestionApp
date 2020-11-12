@@ -6,30 +6,6 @@ import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
 import InvoiceForm from './InvoiceForm';
 
-const facs = [
-  {
-    idf: "0011",
-    idc: "001",
-    fecha: "10/05/2020",
-    desc: 10,
-    total: 1000,
-  },
-  {
-    idf: "002",
-    idc: "001",
-    fecha: "10/08/2019",
-    desc: 0,
-    total: 2000,
-  },
-  {
-    idf: "003",
-    idc: "002",
-    fecha: "27/05/2019",
-    desc: 10,
-    total: 1640,
-  },
-];
-
 class InvoicesTable extends Component {
   state = {
     modalIsOpen: false,
@@ -72,6 +48,7 @@ class InvoicesTable extends Component {
   };
 
   render() {
+    const {facturas} = this.props;
     const {modalHeader, modalIsOpen, filtroFecha} = this.state;
     return (
       <React.Fragment>
@@ -101,7 +78,7 @@ class InvoicesTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {facs.map((e, i) => {
+            {facturas.map((e, i) => {
               return (
                 <tr key={i}>
                   <td>{e.idf}</td>

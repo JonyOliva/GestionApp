@@ -8,7 +8,7 @@ class InvoiceForm extends Component {
 
   state = {
     cliente: {},
-    descuento: undefined,
+    descuento: 0,
     checkToAdd: false,
     productos: [],
     prodActual: {},
@@ -25,13 +25,14 @@ class InvoiceForm extends Component {
   }
 
   onSubmit = (event) => {
-    const { Descuento, total } = this.state;
+    const { descuento, total, cliente, productos } = this.state;
     let fecha = new Date();
     event.preventDefault();
     console.log({
-      IdclienteFac: undefined,
+      IdclienteFac: cliente.idCli,
       FechaFac: fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear(),
-      DescuentoFac: Descuento,
+      ProductosFac: productos,
+      DescuentoFac: descuento,
       TotalFac: total
     })
     return
@@ -39,7 +40,7 @@ class InvoiceForm extends Component {
       this.props.onSubmit({
         IdclienteFac: undefined,
         FechaFac: fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear(),
-        DescuentoFac: Descuento,
+        DescuentoFac: descuento,
         TotalFac: total
       })
     } else {
