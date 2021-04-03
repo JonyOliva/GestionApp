@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import ProductsTable from "./ProductsTable";
 import CategoriasTable from "./CategoriasTable";
-import {SesionContext} from "../inicio/SesionComponent";
+import { SesionContext } from "../inicio/SesionComponent";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
-import {CAT_URL, PROD_URL} from "../../Constants";
-import {FetchData} from "../DataFunc";
+import { CAT_URL, PROD_URL } from "../../Constants";
+import { FetchData } from "../DataFunc";
 
 class ValoresComponent extends Component {
   static contextType = SesionContext;
@@ -37,8 +37,8 @@ class ValoresComponent extends Component {
   };
 
   setAlert = (head, style, msg, timeOut) => {
-    const {timerId} = this.state.alert;
-    if(timerId !== undefined)
+    const { timerId } = this.state.alert;
+    if (timerId !== undefined)
       clearTimeout(timerId);
     let timer = (timeOut) ? setTimeout(this.AlertClose, 3000) : undefined;
     this.setState({
@@ -54,7 +54,7 @@ class ValoresComponent extends Component {
 
   getProductos = async () => {
     if (this.state.categorias.length === 0)
-    throw new Error("no categorias");
+      throw new Error("no categorias");
     await fetch(PROD_URL)
       .then((response) => {
         return response.json();
@@ -90,7 +90,7 @@ class ValoresComponent extends Component {
   }
 
   CategoriasHandler = async (method, cat, id) => {
-    let url = (id!==undefined) ? CAT_URL + "/" + id : CAT_URL;
+    let url = (id !== undefined) ? CAT_URL + "/" + id : CAT_URL;
     this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
     try {
       await FetchData(url, method, this.context.headers(), cat, this.setAlert);
@@ -107,7 +107,7 @@ class ValoresComponent extends Component {
   };
 
   ProductosHandler = async (method, prod, id) => {
-    let url = (id!==undefined) ? PROD_URL + "/" + id : PROD_URL
+    let url = (id !== undefined) ? PROD_URL + "/" + id : PROD_URL
     this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
     try {
       await FetchData(url, method, this.context.headers(), prod, this.setAlert);
@@ -125,7 +125,7 @@ class ValoresComponent extends Component {
   getCurrentTable = () => {
     const { activo, categorias, products } = this.state;
     if (activo === 0) {
-      return <ProductsTable products={products} categorias={categorias} postData={this.ProductosHandler}/>;
+      return <ProductsTable products={products} categorias={categorias} postData={this.ProductosHandler} />;
     } else if (activo === 1) {
       return (
         <CategoriasTable
@@ -149,24 +149,25 @@ class ValoresComponent extends Component {
     const { tablas, activo, alert } = this.state;
     return (
       <div className="container mt-2">
-        <h4>Valores</h4>
-        <Tabs
-          headers={tablas}
-          activo={activo}
-          onChange={this.ChangeActiveTab}
-        />
-        <div className="w-50 m-auto">
+        <div className="d-flex">
+          <h4 className="py-3">Valores</h4>
           <Alert
-            className="mb-0"
+            className="ml-auto"
             variant={alert.style}
             show={alert.enable}
             onClose={this.AlertClose}
             dismissible
           >
-            {alert.head} {"  "} 
+            {alert.head} {"  "}
             {alert.msg}
           </Alert>
         </div>
+        <Tabs
+          headers={tablas}
+          activo={activo}
+          onChange={this.ChangeActiveTab}
+        />
+
         {this.getCurrentTable()}
       </div>
     );

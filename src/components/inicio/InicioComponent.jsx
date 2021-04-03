@@ -9,7 +9,7 @@ class InicioComponent extends Component {
 
   showCurrentSession = () => {
     let component = (this.context.sesion) ? 
-    <p className="text-session"> Usted ha iniciado sesión como {this.context.nombre}</p> :
+    <div className="text-session px-4 py-2"> Usted ha iniciado sesión como {this.context.nombre}</div> :
     <LoginForm />
     return component;
   }
@@ -17,7 +17,7 @@ class InicioComponent extends Component {
   render() {
     return (
       <div className="container mt-2">
-        <h4>Inicio</h4>
+        <h4 className="py-3">Inicio</h4>
         <div className="row row-cols-3 justify-content-around">
           <div className="col-5">
             <div className="border-home">

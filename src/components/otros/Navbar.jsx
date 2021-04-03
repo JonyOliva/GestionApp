@@ -13,7 +13,7 @@ class Navbar extends Component {
 
   render() {
     return (
-      <nav className="navbar navbar-dark nav-container">
+      <nav className="navbar nav-container">
         <span className="navbar-brand mb-0 h1" style={{ color: "#708090" }}>
           {this.props.children}
         </span>

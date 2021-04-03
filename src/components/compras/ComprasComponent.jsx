@@ -2,9 +2,19 @@ import React, { Component } from 'react';
 import Tabs from "../otros/Tabs";
 import ExistenciasTable from "./ExistenciasTable";
 import {PROD_URL, RSTOCK_URL} from "../../Constants";
+import { Alert } from "react-bootstrap";
 
 class ComprasComponent extends Component {
-  state = { existencias: [] };
+  state = { 
+    existencias: [] ,
+    alert: {
+      enable: false,
+      style: "",
+      head: "",
+      msg: "",
+      timerId: undefined
+    },
+  };
 
   async componentDidMount() {
     let res = await fetch(PROD_URL);
@@ -28,9 +38,22 @@ class ComprasComponent extends Component {
   }
 
   render() {
+    const { alert  } = this.state;
     return (
       <div className="container mt-2">
-        <h4>Compras</h4>
+        <div className="d-flex">
+          <h4 className="py-3">Compras</h4>
+          <Alert
+            className="ml-auto"
+            variant={alert.style}
+            show={alert.enable}
+            onClose={this.AlertClose}
+            dismissible
+          >
+            {alert.head} {"  "}
+            {alert.msg}
+          </Alert>
+        </div>
         <Tabs headers={["Existencias"]} activo={0} onChange={() => {}} />
         <ExistenciasTable existencias={this.state.existencias} />
       </div>

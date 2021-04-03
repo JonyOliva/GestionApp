@@ -5,8 +5,8 @@ font-size: 1.2rem;
 }
 .nav-btn {
   color: skyblue;
-  background-color: #282c34;
   font-weight: bold;
+  transition: all 0.2s ease-in-out;
 }
 .nav-btn:hover {
   color: white;
@@ -15,7 +15,8 @@ font-size: 1.2rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  background-color: #282c34;
+  background: rgba(11,25,52,1);
+  background: linear-gradient(90deg, rgba(11,25,52,1) 0%, rgba(40,44,52,1) 100%);
   gap: 5em;
 }
 .nav-item{
@@ -28,14 +29,9 @@ font-size: 1.2rem;
   width: 32px;
   border-radius: 5%;
   padding: 1px;
+  transition: all 0.2s ease-in-out;
 }
 .nav-btn:hover > .nav-icon {
     background-color: white;
-    animation-name: size-anim;
-    animation-duration: 0.5s;
-}
-
-@keyframes size-anim{
-  from {width: 32px;}
-  to{width: 28px;}
+    transform: scale(1.2);
 }

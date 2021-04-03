@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import ClientesTable from "./ClientesTable";
 import UsuariosTable from "./UsuariosTable";
-import {SesionContext} from "../inicio/SesionComponent";
+import { SesionContext } from "../inicio/SesionComponent";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
-import {USU_URL, ROL_URL, CLI_URL} from "../../Constants";
-import {FetchData} from "../DataFunc";
+import { USU_URL, ROL_URL, CLI_URL } from "../../Constants";
+import { FetchData } from "../DataFunc";
 
 class ReportesComponent extends Component {
   static contextType = SesionContext;
@@ -25,7 +25,7 @@ class ReportesComponent extends Component {
   };
 
   getCustomers = async () => {
-    await fetch(CLI_URL, {method: "GET", headers: this.context.headers})
+    await fetch(CLI_URL, { method: "GET", headers: this.context.headers })
       .then((response) => {
         return response.json();
       })
@@ -38,7 +38,7 @@ class ReportesComponent extends Component {
   };
 
   getRoles = async () => {
-    return await fetch(ROL_URL, {method: "GET", headers: this.context.headers})
+    return await fetch(ROL_URL, { method: "GET", headers: this.context.headers })
       .then((response) => {
         return response.json();
       })
@@ -51,10 +51,10 @@ class ReportesComponent extends Component {
   };
 
   getUsers = async () => {
-    await fetch(USU_URL, {method: "GET", headers: this.context.headers})
+    await fetch(USU_URL, { method: "GET", headers: this.context.headers })
       .then((response) => {
-        if(response.status === 401)  
-        throw new Error("No posee los privilegios para realizar esta acción");
+        if (response.status === 401)
+          throw new Error("No posee los privilegios para realizar esta acción");
         return response.json();
       })
       .then((users) => {
@@ -87,13 +87,13 @@ class ReportesComponent extends Component {
   }
 
   UsuariosHandler = async (method, prod, id) => {
-    let url = (id!==undefined) ? USU_URL + "/" + id : USU_URL
+    let url = (id !== undefined) ? USU_URL + "/" + id : USU_URL
     await FetchData(url, method, this.context.headers(), prod, this.setAlert);
     await this.getUsers();
   };
 
   ClientesHandler = async (method, cl, id) => {
-    let url = (id!==undefined) ? CLI_URL + "/" + id : CLI_URL
+    let url = (id !== undefined) ? CLI_URL + "/" + id : CLI_URL
     await FetchData(url, method, this.context.headers(), cl, this.setAlert);
     await this.getCustomers();
   };
@@ -121,7 +121,7 @@ class ReportesComponent extends Component {
     if (activo === 0) {
       return <ClientesTable clientes={clientes} postData={this.ClientesHandler} />;
     } else if (activo === 1) {
-      return <UsuariosTable usuarios={usuarios} roles={roles} postData={this.UsuariosHandler}/>;
+      return <UsuariosTable usuarios={usuarios} roles={roles} postData={this.UsuariosHandler} />;
     }
   };
 
@@ -133,24 +133,25 @@ class ReportesComponent extends Component {
     const { tablas, activo, alert } = this.state;
     return (
       <div className="container mt-2">
-        <h4>Reportes</h4>
-          <Tabs
-            headers={tablas}
-            activo={activo}
-            onChange={this.ChangeActiveTab}
-          />
-          <div className="w-50 m-auto">
-            <Alert
-              className="mb-0"
-              variant={alert.style}
-              show={alert.enable}
-              onClose={this.AlertClose}
-              dismissible
-            >
-              {alert.head} {"  "}
-              {alert.msg}
-            </Alert>
-          </div>
+        <div className="d-flex">
+          <h4 className="py-3">Reportes</h4>
+          <Alert
+            className="ml-auto"
+            variant={alert.style}
+            show={alert.enable}
+            onClose={this.AlertClose}
+            dismissible
+          >
+            {alert.head} {"  "}
+            {alert.msg}
+          </Alert>
+        </div>
+        <Tabs
+          headers={tablas}
+          activo={activo}
+          onChange={this.ChangeActiveTab}
+        />
+
         {this.getCurrentTable()}
       </div>
     );
