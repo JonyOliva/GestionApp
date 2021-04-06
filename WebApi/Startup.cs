@@ -35,7 +35,7 @@ namespace GestionAppWebApi
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
+                        builder.SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
                     });
             });
             services.AddControllers();

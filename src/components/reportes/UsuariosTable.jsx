@@ -76,7 +76,7 @@ class UsuariosTable extends Component {
             onClick={() => {
               this.ModalHandle();
             }}
-            className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
+            className="btn btn-primary btn-sm my-2 ml-auto mr-3"
           >
             {" "}
             Nuevo
@@ -98,7 +98,7 @@ class UsuariosTable extends Component {
                   <td>{e.idUsu}</td>
                   <td>{e.nombreUsu}</td>
                   <td>{e.nombreRol}</td>
-                  <td align="center">
+                  <td align="center" className="p-0 align-middle">
                     <EditBtn
                       onClick={() => {
                         this.ModalHandle(e.idUsu);

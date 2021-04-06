@@ -97,7 +97,7 @@ class CategoriasTable extends Component {
                   <td>{e.idCat}</td>
                   <td>{e.nombreCat}</td>
                   <td>{e.descripcionCat}</td>
-                  <td align="center">
+                  <td align="center" className="p-0 align-middle">
                     <EditBtn
                       onClick={() => {
                         this.ModalHandle(e.idCat);

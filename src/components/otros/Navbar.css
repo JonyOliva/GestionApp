@@ -12,12 +12,9 @@ font-size: 1.2rem;
   color: white;
 }
 .nav-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  background: rgba(11,25,52,1);
-  background: linear-gradient(90deg, rgba(11,25,52,1) 0%, rgba(40,44,52,1) 100%);
-  gap: 5em;
+  background: rgb(40,44,52);
+  background: linear-gradient(90deg, rgba(40,44,52,1) 0%, rgb(29, 33, 39) 100%);
+  gap: 1em;
 }
 .nav-item{
     display: flex;

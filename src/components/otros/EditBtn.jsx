@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./buttons.css";
 import editImg from "../../images/edit.png";
 
 class EditBtn extends Component {
@@ -8,7 +7,7 @@ class EditBtn extends Component {
     return (
       <button
         onClick={this.props.onClick}
-        className="btn btn-light btn-inl"
+        className="btn btn-light px-3 py-1"
       >
         <img src={editImg} width="16px" alt="edit"></img>
       </button>

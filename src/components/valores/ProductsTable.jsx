@@ -101,7 +101,7 @@ class ProductsTable extends Component {
             onClick={() => {
               this.ModalHandle(undefined);
             }}
-            className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
+            className="btn btn-primary btn-sm my-2 ml-auto mr-3"
           >
             {" "}
             Nuevo
@@ -129,7 +129,7 @@ class ProductsTable extends Component {
                     <td>{e.nombreCat}</td>
                     <td>{e.stockProd}</td>
                     <td>${e.precioProd}</td>
-                    <td align="center">
+                    <td align="center" className="p-0 align-middle">
                       <EditBtn
                         onClick={() => {
                           this.ModalHandle(e.idProd);

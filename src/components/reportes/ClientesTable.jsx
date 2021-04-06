@@ -63,7 +63,7 @@ class ClientesTable extends Component {
             onClick={() => {
               this.ModalHandle(undefined);
             }}
-            className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
+            className="btn btn-primary btn-sm my-2 ml-auto mr-3"
           >
             {" "}
               Nuevo
@@ -89,7 +89,7 @@ class ClientesTable extends Component {
                   <td>{e.apellidoCli}</td>
                   <td>{e.dniCli}</td>
                   <td>{e.nroCelularCli}</td>
-                  <td align="center">
+                  <td align="center" className="p-0 align-middle">
                     <EditBtn
                       onClick={() => {
                         this.ModalHandle(e.idCli);

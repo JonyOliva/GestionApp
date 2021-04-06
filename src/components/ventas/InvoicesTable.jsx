@@ -60,7 +60,7 @@ class InvoicesTable extends Component {
             onClick={() => {
               this.ModalHandle(undefined);
             }}
-            className="btn btn-primary btn-sm mb-2 mt-2 ml-auto mr-4"
+            className="btn btn-primary btn-sm my-auto ml-auto mr-3"
           >
             {" "}
             Nuevo
@@ -86,7 +86,7 @@ class InvoicesTable extends Component {
                   <td>{e.fecha}</td>
                   <td>{e.desc > 0 ? e.desc + "%" : "-"}</td>
                   <td>${e.total}</td>
-                  <td align="center">
+                  <td align="center" className="p-0 align-middle">
                     <EditBtn />
                     <DeleteBtn />
                   </td>

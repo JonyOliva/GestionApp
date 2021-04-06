@@ -13,12 +13,12 @@ class Navbar extends Component {
 
   render() {
     return (
-      <nav className="navbar nav-container">
+      <nav className="navbar nav-container shadow">
         <span className="navbar-brand mb-0 h1" style={{ color: "#708090" }}>
           {this.props.children}
         </span>
 
-        <Link to="/" className="nav-btn btn">
+        <Link to="/" className="nav-btn btn ml-auto">
           {" "}
           <img className="nav-icon" src={homeImg} alt="inicio"></img>{" "}
           <div className="nav-item">Inicio</div>{" "}
