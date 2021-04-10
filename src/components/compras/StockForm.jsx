@@ -21,16 +21,17 @@ class StockForm extends Component {
     this.prodInput = React.createRef();
   }
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     const {producto, fecha, stock} = this.state;
     event.preventDefault();
     if (this.validator.allValid()) {
       let data = {
-        IDProducto_Rep: producto.idProd,
-        Cantidad_Rep: parseInt(stock),
-        Fecha_Rep: fecha
+        IdproductoRep: producto.idProd,
+        CantidadRep: parseInt(stock),
+        FechaRep: fecha
       }
-      Stock.PostStock(this.context, data, undefined);
+      await Stock.PostStock(this.context, data, undefined);
+      this.props.onSubmit();
     } else {
       this.validator.showMessages();
       this.forceUpdate();

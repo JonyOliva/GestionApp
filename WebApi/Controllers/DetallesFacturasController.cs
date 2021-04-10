@@ -89,9 +89,15 @@ namespace GestionAppWebApi.Controllers
                 return Unauthorized();
             _context.DetallesFactura.Add(detallesFactura);
             Productos prod = _context.Productos.Find(detallesFactura.IdproductoDet);
-            prod.StockProd = prod.StockProd - (int)detallesFactura.CantidadDet;
-            await _context.SaveChangesAsync();
-
+            if (prod.StockProd - (int)detallesFactura.CantidadDet >= 0)
+            {
+                prod.StockProd = prod.StockProd - (int)detallesFactura.CantidadDet;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                return BadRequest();
+            }
             return CreatedAtAction("GetDetallesFactura", new { id = detallesFactura.IdDet }, detallesFactura);
         }
 

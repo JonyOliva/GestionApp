@@ -1,6 +1,6 @@
 import { PROD_URL } from "../Constants";
 
-export var GetByID = async (context, id, setAlert) => {
+export const GetByID = async (context, id) => {
     let url = PROD_URL + "/" + id
     return await fetch(url, {
         headers: context.headers(),
@@ -13,6 +13,25 @@ export var GetByID = async (context, id, setAlert) => {
         })
         .catch((error) => {
             console.log(error)
-            if (setAlert) setAlert("Error: ", "danger", error.message, true)
+            if (context.setAlert) context.setAlert("Error: ", "danger", error.message, true)
         });
 };
+
+export const PostProduct = async (context, data) => {
+    await fetch(PROD_URL, {
+        headers: context.headers(),
+        method: "POST",
+        body: JSON.stringify(data)
+    })
+        .then((resp) => {
+            if (resp.ok) {
+                if (context.setAlert)
+                context.setAlert("Guardado", "success", "", true);
+              } else if (resp.status === 401)
+                throw new Error("No posee los privilegios para realizar esta acción");
+        })
+        .catch((error) => {
+            console.log(error)
+            if (context.setAlert) context.setAlert("Error: ", "danger", error.message, true)
+        });
+}

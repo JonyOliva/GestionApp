@@ -15,7 +15,7 @@ class ConfirmationModal extends Component {
             Está seguro que desea eliminar el item:
             <br />
           </p>
-          <div className="alert alert-warning w-50 m-auto text-center">{item}</div>
+          <div className="alert alert-warning m-auto text-center">{item}</div>
         </Modal.Body>
         <Modal.Footer className="p-1">
           <button onClick={confirm} className="btn btn-primary btn-sm">Confirmar</button>

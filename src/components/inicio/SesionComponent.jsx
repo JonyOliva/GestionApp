@@ -7,7 +7,32 @@ class SesionComponent extends Component {
   state = {
       sesion: false,
       nombre: "Invitado",
-      token: ""
+      token: "",
+      alert: {
+        enable: false,
+        head: "",
+        style: "",
+        msg: "",
+        timerId: 0
+      }
+  };
+
+  setAlert = (head, style, msg, timeOut) => {
+    const { alert } = this.state;
+    if (alert.timerId !== undefined)
+      clearTimeout(alert.timerId);
+    let timer = (timeOut) ? setTimeout(()=>{
+      this.setState({alert:{enable: false}})
+    }, 3000) : undefined;
+    this.setState({
+      alert: {
+        enable: true,
+        head: head,
+        style: style,
+        msg: msg,
+        timerId: timer
+      }
+    });
   };
 
   login = (nombre, token) => {
@@ -23,7 +48,7 @@ class SesionComponent extends Component {
   }
 
   render() {
-    return <SesionContext.Provider value={{...this.state, login: this.login, headers: this.getHeaders}}>
+    return <SesionContext.Provider value={{...this.state, setAlert: this.setAlert, login: this.login, headers: this.getHeaders}}>
         {this.props.children}
     </SesionContext.Provider>;
   }

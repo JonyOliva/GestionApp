@@ -88,6 +88,8 @@ namespace GestionAppWebApi.Controllers
             if (Utilities.checkUnauthorized(HttpContext, 2))
                 return Unauthorized();
             _context.ReposicionesStock.Add(reposicionesStock);
+            Productos prod = _context.Productos.Find(reposicionesStock.IdproductoRep);
+            prod.StockProd = prod.StockProd + reposicionesStock.CantidadRep;
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetReposicionesStock", new { id = reposicionesStock.IdRep }, reposicionesStock);
@@ -104,8 +106,16 @@ namespace GestionAppWebApi.Controllers
             {
                 return NotFound();
             }
-
-            _context.ReposicionesStock.Remove(reposicionesStock);
+            Productos prod = _context.Productos.Find(reposicionesStock.IdproductoRep);
+            if (prod.StockProd - reposicionesStock.CantidadRep >= 0)
+            {
+                prod.StockProd = prod.StockProd - reposicionesStock.CantidadRep;
+                _context.ReposicionesStock.Remove(reposicionesStock);
+            }
+            else
+            {
+                return BadRequest();
+            }
             await _context.SaveChangesAsync();
 
             return reposicionesStock;
