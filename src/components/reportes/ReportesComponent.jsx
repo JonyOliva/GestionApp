@@ -4,81 +4,26 @@ import UsuariosTable from "./UsuariosTable";
 import { SesionContext } from "../inicio/SesionComponent";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
-import { USU_URL, ROL_URL, CLI_URL } from "../../Constants";
-import { FetchData } from "../DataFunc";
+import * as Roles from "../RolesHandler";
 
 class ReportesComponent extends Component {
   static contextType = SesionContext;
   state = {
-    clientes: [],
-    usuarios: [],
     roles: [],
     tablas: ["Clientes", "Usuarios"],
-    activo: 0,
-    alert: {
-      enable: false,
-      style: "",
-      head: "",
-      msg: "",
-      timerId: undefined,
-    },
-  };
-
-  getCustomers = async () => {
-    await fetch(CLI_URL, { method: "GET", headers: this.context.headers })
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState({ clientes: json });
-      })
-      .catch((error) => {
-        throw error;
-      });
+    activo: 0
   };
 
   getRoles = async () => {
-    return await fetch(ROL_URL, { method: "GET", headers: this.context.headers })
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState({ roles: json });
-      })
-      .catch((error) => {
-        throw error;
-      });
-  };
-
-  getUsers = async () => {
-    await fetch(USU_URL, { method: "GET", headers: this.context.headers })
-      .then((response) => {
-        if (response.status === 401)
-          throw new Error("No posee los privilegios para realizar esta acción");
-        return response.json();
-      })
-      .then((users) => {
-        this.setState({
-          usuarios: users.map((e) => {
-            let rol = this.state.roles.find(
-              (element) => element.nivelRol === e.rolUsu
-            );
-            return { ...e, nombreRol: rol.nombreRol };
-          }),
-        });
-      })
-      .catch((error) => {
-        throw error;
-      });
+    let r = await Roles.Get(this.context);
+    this.setState({roles: r});
   };
 
   async componentDidMount() {
     try {
-      await this.getCustomers();
       await this.getRoles();
-      await this.getUsers();
     } catch (error) {
-      this.setAlert(
+      this.context.alert.set(
         "Error: ",
         "danger",
         error.message
@@ -86,42 +31,12 @@ class ReportesComponent extends Component {
     }
   }
 
-  UsuariosHandler = async (method, prod, id) => {
-    let url = (id !== undefined) ? USU_URL + "/" + id : USU_URL
-    await FetchData(url, method, this.context.headers(), prod, this.setAlert);
-    await this.getUsers();
-  };
-
-  ClientesHandler = async (method, cl, id) => {
-    let url = (id !== undefined) ? CLI_URL + "/" + id : CLI_URL
-    await FetchData(url, method, this.context.headers(), cl, this.setAlert);
-    await this.getCustomers();
-  };
-
-  setAlert = (head, style, msg, timeOut) => {
-    const { timerId } = this.state.alert;
-    if (timerId !== undefined) clearTimeout(timerId);
-    let timer = timeOut ? setTimeout(this.AlertClose, 3000) : undefined;
-    this.setState({
-      alert: {
-        enable: true,
-        head: head,
-        style: style,
-        msg: msg,
-        timerId: timer,
-      },
-    });
-  };
-  AlertClose = () => {
-    const { alert } = this.state;
-    this.setState({ alert: { ...alert, enable: false } });
-  };
   getCurrentTable = () => {
     const { clientes, usuarios, roles, activo } = this.state;
     if (activo === 0) {
-      return <ClientesTable clientes={clientes} postData={this.ClientesHandler} />;
+      return <ClientesTable postData={this.ClientesHandler} />;
     } else if (activo === 1) {
-      return <UsuariosTable usuarios={usuarios} roles={roles} postData={this.UsuariosHandler} />;
+      return <UsuariosTable roles={roles} postData={this.UsuariosHandler} />;
     }
   };
 
@@ -130,7 +45,8 @@ class ReportesComponent extends Component {
   };
 
   render() {
-    const { tablas, activo, alert } = this.state;
+    const { tablas, activo } = this.state;
+    let alert = this.context.alert.get();
     return (
       <div className="container mt-2">
         <div className="d-flex">
@@ -139,7 +55,7 @@ class ReportesComponent extends Component {
             className="ml-auto"
             variant={alert.style}
             show={alert.enable}
-            onClose={this.AlertClose}
+            onClose={this.context.alert.close}
             dismissible
           >
             {alert.head} {"  "}

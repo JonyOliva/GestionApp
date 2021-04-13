@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
+import { SesionContext } from "../inicio/SesionComponent";
+import * as Products from "../ProductsHandler";
 import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
 import Buscador from "../otros/Buscador";
@@ -11,6 +13,7 @@ import ConfirmationModal from "../otros/ConfirmationModal";
 const PAGTAM = 15;
 
 class ProductsTable extends Component {
+  static contextType = SesionContext;
   state = {
     modalIsOpen: false,
     modalHeader: "Nuevo",
@@ -18,26 +21,38 @@ class ProductsTable extends Component {
     confModal: false,
     currentPage: 1,
     producto: {},
+    productos: []
   };
 
-  resetProductState = ()=>{
+  getProductos = async () =>{
+    let prods = await Products.Get(this.context);
+    if(prods)
+    this.setState({
+      productos: prods.map((e)=>{
+        let cat = this.props.categorias.find(ec => e.idcategoriaProd === ec.idCat) || {nombreCat: "-"};
+        return {...e, nombreCat: cat.nombreCat}
+      })
+    });
+  }
+
+  componentDidMount() {
+    this.getProductos();
+  }
+
+  resetProductState = () => {
     this.setState({
       producto: {
-        idProd: -1,
-        nombreProd: "",
-        idcategoriaProd: "",
-        stockProd: "",
-        precioProd: "",
+        idProd: -1
       }
     });
   }
   ModalHandle = (_id) => {
-    const { modalIsOpen } = this.state;
+    const { modalIsOpen, productos } = this.state;
     this.setState({ modalIsOpen: !modalIsOpen });
     if (_id !== undefined) {
       this.setState({ modalHeader: "Modificar" });
       this.setState({
-        producto: this.props.products.find((e) => e.idProd === _id),
+        producto: productos.find((e) => e.idProd === _id),
       });
     } else {
       this.setState({ modalHeader: "Nuevo" });
@@ -45,32 +60,24 @@ class ProductsTable extends Component {
     }
   };
 
-  onDelete = (id) => {
-    if(id){
+  onDelete = async (id) => {
+    if (id) {
       this.setState({
-        producto: this.props.products.find((e) => e.idProd === id)
+        producto: this.state.productos.find((e) => e.idProd === id)
       });
       this.setState({ confModal: true });
-    }else{
-      this.props.postData("DELETE", {}, this.state.producto.idProd);
+    } else {
+      await Products.Delete(this.context, this.state.producto.idProd);
+      this.getProductos();
       this.resetProductState();
       this.setState({ confModal: false });
       this.setState({ currentPage: 1 });
     }
   };
 
-  SubmitHandler = (prod) => {
-    const { producto } = this.state;
-    if (producto.idProd === -1) {
-      this.props.postData("POST", prod);
-    } else {
-      this.props.postData(
-        "PUT",
-        { ...prod, idProd: producto.idProd },
-        producto.idProd
-      );
-    }
+  SubmitHandler = () => {
     this.setState({ modalIsOpen: false });
+    this.getProductos();
   };
 
   pageHandler = (page) => {
@@ -83,16 +90,17 @@ class ProductsTable extends Component {
   };
 
   render() {
-    const { products, categorias } = this.props;
+    const { categorias } = this.props;
     const {
       modalIsOpen,
       producto,
+      productos,
       modalHeader,
       search,
       currentPage,
       confModal
     } = this.state;
-    let productos = products.filter((e) => e.nombreProd.toLowerCase().includes(search));
+    let actProds = productos.filter((e) => e.nombreProd.toLowerCase().includes(search));
     return (
       <React.Fragment>
         <div className="row">
@@ -112,30 +120,30 @@ class ProductsTable extends Component {
             <tr>
               <th># ID</th>
               <th>Nombre</th>
-              <th>Categoria</th>
-              <th>Stock</th>
-              <th>Precio</th>
+              <th className="text-center">Categoria</th>
+              <th className="text-center">Stock</th>
+              <th className="text-center">Precio</th>
               <th width="12%"></th>
             </tr>
           </thead>
           <tbody>
-            {productos
+            {actProds
               .slice((currentPage - 1) * PAGTAM, currentPage * PAGTAM)
               .map((e, i) => {
                 return (
                   <tr key={i}>
                     <td>{e.idProd}</td>
                     <td>{e.nombreProd}</td>
-                    <td>{e.nombreCat}</td>
-                    <td>{e.stockProd}</td>
-                    <td>${e.precioProd}</td>
+                    <td align="center">{e.nombreCat}</td>
+                    <td align="center">{e.stockProd}</td>
+                    <td align="center">${e.precioProd}</td>
                     <td align="center" className="p-0 align-middle">
                       <EditBtn
                         onClick={() => {
                           this.ModalHandle(e.idProd);
                         }}
                       />
-                      <DeleteBtn 
+                      <DeleteBtn
                         onClick={() => {
                           this.onDelete(e.idProd);
                         }}
@@ -154,7 +162,7 @@ class ProductsTable extends Component {
           title={modalHeader + " producto"}
           isOpen={modalIsOpen}
         >
-          <ProductForm categorias={categorias} producto={producto} onSubmit={this.SubmitHandler}/>
+          <ProductForm categorias={categorias} producto={producto} onSubmit={this.SubmitHandler} />
         </CustomModal>
 
         <Pagination
@@ -170,7 +178,7 @@ class ProductsTable extends Component {
             this.setState({ confModal: false });
           }}
           item={"#" + producto.idProd + " - " + producto.nombreProd}
-          confirm={()=>{this.onDelete(undefined)}}
+          confirm={() => { this.onDelete(undefined) }}
         ></ConfirmationModal>
       </React.Fragment>
     );

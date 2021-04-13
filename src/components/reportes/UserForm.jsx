@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
 import SimpleReactValidator from "simple-react-validator";
+import { SesionContext } from "../inicio/SesionComponent";
+import * as Users from "../UsersHandler";
 
 class UserForm extends Component {
-
+  static contextType = SesionContext;
   state = {
     nombre: "",
     rol: -1,
@@ -22,15 +24,21 @@ class UserForm extends Component {
     this.validator = new SimpleReactValidator();
   }
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     const {nombre, rol, pass} = this.state;
     event.preventDefault();
     if(this.validator.allValid()){
-      this.props.onSubmit({
+      let data = {
         nombreUsu: nombre,
         rolUsu: rol,
         passwordUsu: pass
-      })
+      }
+      if(this.props.usuario.idUsu !== -1){
+        await Users.Put(this.context, this.props.usuario.idUsu, {...data, idUsu: this.props.usuario.idUsu});
+      }else{
+        await Users.Post(this.context, data);
+      }
+      this.props.onSubmit();
     }else{
       this.validator.showMessages();
       this.forceUpdate();

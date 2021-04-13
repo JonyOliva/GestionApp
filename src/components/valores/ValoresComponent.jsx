@@ -4,133 +4,61 @@ import CategoriasTable from "./CategoriasTable";
 import { SesionContext } from "../inicio/SesionComponent";
 import Tabs from "../otros/Tabs";
 import { Alert } from "react-bootstrap";
-import { CAT_URL, PROD_URL } from "../../Constants";
-import { FetchData } from "../DataFunc";
+import * as Products from "../ProductsHandler";
+import * as Categories from "../CategoriesHandler";
 
 class ValoresComponent extends Component {
   static contextType = SesionContext;
   state = {
-    products: [],
     categorias: [],
     tablas: ["Productos", "Categorias"],
-    activo: 0,
-    alert: {
-      enable: false,
-      style: "",
-      head: "",
-      msg: "",
-      timerId: undefined
-    },
+    activo: 0
   };
 
   getCategorias = async () => {
-    await fetch(CAT_URL)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState({ categorias: json });
-      })
-      .catch((error) => {
-        throw error;
-      });
-  };
-
-  setAlert = (head, style, msg, timeOut) => {
-    const { timerId } = this.state.alert;
-    if (timerId !== undefined)
-      clearTimeout(timerId);
-    let timer = (timeOut) ? setTimeout(this.AlertClose, 3000) : undefined;
-    this.setState({
-      alert: {
-        enable: true,
-        head: head,
-        style: style,
-        msg: msg,
-        timerId: timer
-      },
-    });
+    await Categories.Get(this.context).then(categories => {
+      this.setState({ categorias: categories });
+    })
   };
 
   getProductos = async () => {
-    if (this.state.categorias.length === 0)
+    if (!this.state.categorias)
       throw new Error("no categorias");
-    await fetch(PROD_URL)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState({
-          products: json.map((e) => {
-            let categoria = this.state.categorias.find(
-              (cat) => cat.idCat === e.idcategoriaProd
-            );
-            return { ...e, nombreCat: (categoria) ? categoria.nombreCat : "Sin categoria" };
-          }),
-        });
-      })
-      .catch((error) => {
-        throw error;
-      });
+
+    let json = await Products.Get(this.context);
+    if(json)
+    this.setState({
+      products: json.map((e) => {
+        let categoria = this.state.categorias.find(
+          (cat) => cat.idCat === e.idcategoriaProd
+        );
+        return { ...e, nombreCat: (categoria) ? categoria.nombreCat : "Sin categoria" };
+      }),
+    });
   };
 
   async componentDidMount() {
-    this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
     try {
       await this.getCategorias();
-      await this.getProductos();
-      this.AlertClose();
+      await this.getProductos(); 
     } catch (error) {
-      this.setAlert(
-        "Error:",
+      this.context.alert.set(
+        "Error: ",
         "danger",
-        "No se pudo conectar a la base de datos"
+        error.message
       );
     }
   }
 
-  CategoriasHandler = async (method, cat, id) => {
-    let url = (id !== undefined) ? CAT_URL + "/" + id : CAT_URL;
-    this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
-    try {
-      await FetchData(url, method, this.context.headers(), cat, this.setAlert);
-      await this.getCategorias();
-      await this.getProductos();
-      //this.AlertClose();
-    } catch (error) {
-      this.setAlert(
-        "Error:",
-        "danger",
-        "No se pudo conectar a la base de datos"
-      );
-    }
-  };
-
-  ProductosHandler = async (method, prod, id) => {
-    let url = (id !== undefined) ? PROD_URL + "/" + id : PROD_URL
-    this.setAlert("Cargando...", "warning", "Conectando con la base de datos");
-    try {
-      await FetchData(url, method, this.context.headers(), prod, this.setAlert);
-      await this.getProductos();
-      //this.AlertClose();
-    } catch (error) {
-      this.setAlert(
-        "Error:",
-        "danger",
-        "No se pudo conectar a la base de datos"
-      );
-    }
-  };
-
   getCurrentTable = () => {
-    const { activo, categorias, products } = this.state;
+    const { activo, categorias } = this.state;
     if (activo === 0) {
-      return <ProductsTable products={products} categorias={categorias} postData={this.ProductosHandler} />;
+      return <ProductsTable categorias={categorias} />;
     } else if (activo === 1) {
       return (
         <CategoriasTable
           categorias={categorias}
-          postData={this.CategoriasHandler}
+          Update={this.getCategorias}
         />
       );
     }
@@ -140,13 +68,9 @@ class ValoresComponent extends Component {
     this.setState({ activo: index });
   };
 
-  AlertClose = () => {
-    const { alert } = this.state;
-    this.setState({ alert: { ...alert, enable: false } });
-  };
-
   render() {
-    const { tablas, activo, alert } = this.state;
+    const { tablas, activo } = this.state;
+    let alert = this.context.alert.get();
     return (
       <div className="container mt-2">
         <div className="d-flex">
@@ -155,7 +79,7 @@ class ValoresComponent extends Component {
             className="ml-auto"
             variant={alert.style}
             show={alert.enable}
-            onClose={this.AlertClose}
+            onClose={this.context.alert.close}
             dismissible
           >
             {alert.head} {"  "}

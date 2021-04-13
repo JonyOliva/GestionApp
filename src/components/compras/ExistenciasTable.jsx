@@ -37,7 +37,7 @@ class ExistenciasTable extends Component {
   }
 
   UpdateStocks = async () => {
-    let json = await Stocks.GetStock(this.context);
+    let json = await Stocks.Get(this.context);
     this.setState({
       existencias: json.map((e) => {
         let prod = this.state.products.find(
@@ -70,7 +70,7 @@ class ExistenciasTable extends Component {
       });
       this.setState({ confModal: true });
     } else {
-      Stocks.DeleteStock(this.context, this.state.existencia.idRep).then(() => {
+      Stocks.Delete(this.context, this.state.existencia.idRep).then(() => {
         this.resetItemState();
         this.setState({ confModal: false });
         this.UpdateStocks();

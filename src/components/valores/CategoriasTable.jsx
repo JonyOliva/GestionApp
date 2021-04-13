@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import { SesionContext } from "../inicio/SesionComponent";
 import { Table } from "react-bootstrap";
+import * as Categories from "../CategoriesHandler";
 import DeleteBtn from "../otros/DeleteBtn";
 import EditBtn from "../otros/EditBtn";
 import CustomModal from "../otros/CustomModal";
@@ -7,6 +9,7 @@ import ConfirmationModal from "../otros/ConfirmationModal";
 import CatForm from "./CatForm";
 
 class CategoriasTable extends Component {
+  static contextType = SesionContext;
   state = {
     modalIsOpen: false,
     modalHeader: "Nuevo",
@@ -17,25 +20,14 @@ class CategoriasTable extends Component {
   resetCatState = () => {
     this.setState({
       categoria: {
-        idCat: -1,
-        nombreCat: "",
-        descripcionCat: "",
+        idCat: -1
       },
     });
   };
 
-  SubmitHandler = (Cat) => {
-    const { categoria } = this.state;
-    if (categoria.idCat === -1) {
-      this.props.postData("POST", Cat);
-    } else {
-      this.props.postData(
-        "PUT",
-        { ...Cat, idCat: categoria.idCat },
-        categoria.idCat
-      );
-    }
+  SubmitHandler = () => {
     this.setState({ modalIsOpen: false });
+    this.props.Update();
   };
 
   ModalHandle = (_id) => {
@@ -52,21 +44,21 @@ class CategoriasTable extends Component {
     }
   };
 
-  onDelete = (id) => {
+  onDelete = async (id) => {
     if(id){
       this.setState({
         categoria: this.props.categorias.find((e) => e.idCat === id)
       });
       this.setState({ confModal: true });
     }else{
-      this.props.postData("DELETE", {}, this.state.categoria.idCat);
+      await Categories.Delete(this.context, this.state.categoria.idCat);
+      this.props.Update();
       this.resetCatState();
       this.setState({ confModal: false });
     }
   };
 
   render() {
-    console.log(this.context)
     const {confModal, categoria, modalHeader, modalIsOpen} = this.state;
     return (
       <React.Fragment>

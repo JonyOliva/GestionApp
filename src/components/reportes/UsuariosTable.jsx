@@ -5,25 +5,43 @@ import EditBtn from "../otros/EditBtn";
 import CustomModal from "../otros/CustomModal";
 import UserForm from "./UserForm";
 import ConfirmationModal from "../otros/ConfirmationModal";
+import { SesionContext } from "../inicio/SesionComponent";
+import * as Users from "../UsersHandler";
 
 class UsuariosTable extends Component {
+  static contextType = SesionContext;
   state = {
     modalIsOpen: false,
     modalHeader: "Nuevo",
     search: "",
     confModal: false,
     usuario: {},
+    usuarios: []
   };
+
+  componentDidMount() {
+    this.getUsers();
+  }
 
   resetUsuState = () => {
     this.setState({
       usuario: {
-        idUsu: -1,
-        nombreUsu: "",
-        rolUsu: 1,
-        passwordUsu: "",
+        idUsu: -1
       },
     });
+  };
+
+  getUsers = async () => {
+    let users = await Users.Get(this.context);
+    if (users)
+      this.setState({
+        usuarios: users.map((e) => {
+          let rol = this.props.roles.find(
+            (element) => element.nivelRol === e.rolUsu
+          );
+          return { ...e, nombreRol: rol.nombreRol };
+        }),
+      });
   };
 
   ModalHandle = (_id) => {
@@ -40,35 +58,27 @@ class UsuariosTable extends Component {
     }
   };
 
-  SubmitHandler = (user) => {
-    const { usuario } = this.state;
-    if (usuario.idUsu === -1) {
-      this.props.postData("POST", user);
-    } else {
-      this.props.postData(
-        "PUT",
-        { ...user, idUsu: usuario.idUsu },
-        usuario.idUsu
-      );
-    }
+  SubmitHandler = () => {
+    this.getUsers();
     this.setState({ modalIsOpen: false });
   };
 
-  onDelete = (id) => {
+  onDelete = async (id) => {
     if (id) {
       this.setState({
-        usuario: this.props.usuarios.find((e) => e.idUsu === id),
+        usuario: this.state.usuarios.find((e) => e.idUsu === id),
       });
       this.setState({ confModal: true });
     } else {
-      this.props.postData("DELETE", {}, this.state.usuario.idUsu);
+      await Users.Delete(this.context, this.state.usuario.idUsu);
+      this.getUsers();
       this.resetUsuState();
       this.setState({ confModal: false });
     }
   };
 
   render() {
-    const { modalIsOpen, modalHeader, confModal, usuario } = this.state;
+    const { modalIsOpen, modalHeader, confModal, usuario, usuarios } = this.state;
     return (
       <React.Fragment>
         <div className="row">
@@ -92,7 +102,7 @@ class UsuariosTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.usuarios.map((e, i) => {
+            {usuarios.map((e, i) => {
               return (
                 <tr key={i}>
                   <td>{e.idUsu}</td>
@@ -134,7 +144,7 @@ class UsuariosTable extends Component {
             this.setState({ confModal: false });
           }}
           item={`#${usuario.idUsu} - ${usuario.nombreUsu} , con el rol asignado de ${usuario.nombreRol}`}
-          confirm={()=>{this.onDelete(undefined)}}
+          confirm={() => { this.onDelete(undefined) }}
         ></ConfirmationModal>
       </React.Fragment>
     );

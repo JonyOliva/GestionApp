@@ -5,25 +5,23 @@ export const SesionContext = React.createContext("Invitado");
 
 class SesionComponent extends Component {
   state = {
-      sesion: false,
-      nombre: "Invitado",
-      token: "",
-      alert: {
-        enable: false,
-        head: "",
-        style: "",
-        msg: "",
-        timerId: 0
-      }
+    sesion: false,
+    nombre: "Invitado",
+    token: "",
+    alert: {
+      enable: false,
+      head: "",
+      style: "",
+      msg: "",
+      timerId: 0
+    }
   };
 
   setAlert = (head, style, msg, timeOut) => {
     const { alert } = this.state;
     if (alert.timerId !== undefined)
       clearTimeout(alert.timerId);
-    let timer = (timeOut) ? setTimeout(()=>{
-      this.setState({alert:{enable: false}})
-    }, 3000) : undefined;
+    let timer = (timeOut) ? setTimeout(this.closeAlert, 3000) : undefined;
     this.setState({
       alert: {
         enable: true,
@@ -35,21 +33,38 @@ class SesionComponent extends Component {
     });
   };
 
+  closeAlert = () => {
+    this.setState({ alert: { enable: false }});
+  }
+  getAlert = () => {
+    return this.state.alert
+  }
+
   login = (nombre, token) => {
-    this.setState({sesion: true, nombre: nombre, token: token});
+    this.setState({ sesion: true, nombre: nombre, token: token });
   }
 
   getHeaders = () => {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    if(this.state.sesion)
-    headers.append('Authorization', this.state.token);
+    if (this.state.sesion)
+      headers.append('Authorization', this.state.token);
     return headers;
   }
 
   render() {
-    return <SesionContext.Provider value={{...this.state, setAlert: this.setAlert, login: this.login, headers: this.getHeaders}}>
-        {this.props.children}
+    return <SesionContext.Provider value={
+      {
+        alert:{
+          set: this.setAlert, get: this.getAlert, close: this.closeAlert
+        },
+        userName: this.state.nombre,
+        isLogged: this.state.sesion,
+        login: this.login,
+        headers: this.getHeaders
+      }
+    }>
+      {this.props.children}
     </SesionContext.Provider>;
   }
 }

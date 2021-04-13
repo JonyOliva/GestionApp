@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Form } from "react-bootstrap";
+import { SesionContext } from "../inicio/SesionComponent";
 import SimpleReactValidator from "simple-react-validator";
+import * as Customers from "../CustomersHandler";
 
 class ClientForm extends Component {
-
+    static contextType = SesionContext;
     state = {
         idCli: -1,
         nombre: "",
@@ -27,17 +29,22 @@ class ClientForm extends Component {
         this.validator = new SimpleReactValidator();
     }
 
-    onSubmit = (event) => {
+    onSubmit = async (event) => {
         const { nombre, apellido, dni, nroCel } = this.state;
         event.preventDefault();
         if (this.validator.allValid()) {
-            this.props.onSubmit({
-                
+            let customer = {
                 NombreCli: nombre,
                 ApellidoCli: apellido,
                 DniCli: dni,
                 NroCelularCli: nroCel
-            })
+            }
+            if(this.props.cliente.idCli !== -1){
+                await Customers.Put(this.context, this.props.cliente.idCli, {...customer, idCli: this.props.cliente.idCli});
+            }else{
+                await Customers.Post(this.context, customer);
+            }
+            this.props.onSubmit();
         } else {
             this.validator.showMessages();
             this.forceUpdate();

@@ -1,4 +1,5 @@
 import { PROD_URL } from "../Constants";
+import { GetData, PostData, PutData, DeleteData } from "./DataFunc";
 
 export const GetByID = async (context, id) => {
     let url = PROD_URL + "/" + id
@@ -13,25 +14,22 @@ export const GetByID = async (context, id) => {
         })
         .catch((error) => {
             console.log(error)
-            if (context.setAlert) context.setAlert("Error: ", "danger", error.message, true)
+            context.alert.set("Error: ", "danger", error.message, true)
         });
 };
 
-export const PostProduct = async (context, data) => {
-    await fetch(PROD_URL, {
-        headers: context.headers(),
-        method: "POST",
-        body: JSON.stringify(data)
-    })
-        .then((resp) => {
-            if (resp.ok) {
-                if (context.setAlert)
-                context.setAlert("Guardado", "success", "", true);
-              } else if (resp.status === 401)
-                throw new Error("No posee los privilegios para realizar esta acción");
-        })
-        .catch((error) => {
-            console.log(error)
-            if (context.setAlert) context.setAlert("Error: ", "danger", error.message, true)
-        });
+export const Get = async (context) => {
+    return await GetData(context, PROD_URL);
+}
+
+export const Post = async (context, data) => {
+    await PostData(context, PROD_URL, data);
+}
+
+export const Put = async (context, id, data) => {
+    await PutData(context, PROD_URL, id, data);
+}
+
+export const Delete = async (context, id) => {
+    await DeleteData(context, PROD_URL, id);
 }

@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 import SimpleReactValidator from "simple-react-validator";
+import { SesionContext } from "../inicio/SesionComponent";
+import * as Product from "../ProductsHandler";
 
 class ProductForm extends Component {
-
+  static contextType = SesionContext;
   state = {
     nombre: "",
     categoria: -1,
@@ -24,15 +26,21 @@ class ProductForm extends Component {
     this.validator = new SimpleReactValidator();
   }
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     event.preventDefault();
     if(this.validator.allValid()){
-      this.props.onSubmit({
+      let data = {
         nombreProd: this.state.nombre,
         idcategoriaProd: (this.state.categoria===-1) ? 1 : this.state.categoria,
         stockProd: parseInt(this.state.stock),
         precioProd: parseInt(this.state.precio),
-      })
+      };
+      if(this.props.producto.idProd !== -1){
+        await Product.Put(this.context, this.props.producto.idProd, {...data, idProd: this.props.producto.idProd});
+      }else{
+        await Product.Post(this.context, data);
+      }
+      this.props.onSubmit();
     }else{
       this.validator.showMessages();
       this.forceUpdate();

@@ -1,21 +1,28 @@
 import React, { Component } from "react";
+import { SesionContext } from "../inicio/SesionComponent";
+import * as Categories from "../CategoriesHandler";
 import { Form } from "react-bootstrap";
 
 class CatForm extends Component {
-  state = {};
-
+  static contextType = SesionContext;
   constructor(){
     super();
     this.nombre = React.createRef();
     this.descrip = React.createRef();
   }
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     event.preventDefault();
-    this.props.onSubmit({
+    let newCat = {
       nombreCat: this.nombre.current.value,
       descripcionCat: this.descrip.current.value
-    })
+    }
+    if(this.props.cat.idCat !== -1){
+      await Categories.Put(this.context, this.props.cat.idCat, {...newCat, idCat: this.props.cat.idCat});
+    }else{
+      await Categories.Post(this.context, newCat);
+    }
+    this.props.onSubmit();
   };
 
   render() {

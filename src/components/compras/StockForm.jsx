@@ -30,7 +30,7 @@ class StockForm extends Component {
         CantidadRep: parseInt(stock),
         FechaRep: fecha
       }
-      await Stock.PostStock(this.context, data, undefined);
+      await Stock.Post(this.context, data, undefined);
       this.props.onSubmit();
     } else {
       this.validator.showMessages();
@@ -57,16 +57,14 @@ class StockForm extends Component {
       <Form onSubmit={this.onSubmit}>
         <Form.Group>
           <Form.Label>#ID Producto</Form.Label>
-          <Row>
+          <Form.Row>
             <Col xs={3}>
             <Form.Control name="producto" type="number" onBlur={this.checkProductId} ref={this.prodInput} />
             </Col>
-            <Col className="border mr-3 px-1 align-self-center text-center">
-            <div >
-              {producto ? producto.nombreProd : ""}
-            </div>
+            <Col className="border px-1 align-self-center text-center">
+              {producto.nombreProd ? <div className="py-1"> {producto.nombreProd}</div> : ""}
             </Col>
-          </Row>
+          </Form.Row>
           <div className="text-danger">{this.validator.message("producto", this.state.producto.idProd, "required|numeric|min:1,num")}</div>
         </Form.Group>
         <Form.Group>

@@ -9,8 +9,8 @@ class InicioComponent extends Component {
   state = {};
 
   showCurrentSession = () => {
-    let component = (this.context.sesion) ?
-      <div className="text-session px-4 py-2"> Usted ha iniciado sesión como {this.context.nombre}</div> :
+    let component = (this.context.isLogged) ?
+      <div className="text-session px-4 py-2"> Usted ha iniciado sesión como {this.context.userName}</div> :
       <LoginForm />
     return component;
   }

@@ -4,13 +4,17 @@ import EditBtn from "../otros/EditBtn";
 import Buscador from "../otros/Buscador";
 import CustomModal from "../otros/CustomModal";
 import ClientForm from "./ClientForm"
+import { SesionContext } from "../inicio/SesionComponent";
+import * as Customers from "../CustomersHandler";
 
 class ClientesTable extends Component {
+  static contextType = SesionContext;
   state = {
     modalIsOpen: false,
     modalHeader: "Nuevo",
     confModal: false,
-    cliente: { undefined }
+    cliente: { undefined },
+    clientes: []
   }
 
   resetClState = () => {
@@ -25,13 +29,22 @@ class ClientesTable extends Component {
     });
   };
 
+  componentDidMount() {
+    this.getCustomers();
+  }
+
+  getCustomers = async () => {
+    let c = await Customers.Get(this.context);
+    this.setState({ clientes: c });
+  };
+
   ModalHandle = (_id) => {
     const { modalIsOpen } = this.state;
     this.setState({ modalIsOpen: !modalIsOpen });
     if (_id !== undefined) {
       this.setState({ modalHeader: "Modificar" });
       this.setState({
-        cliente: this.props.clientes.find((e) => e.idCli === _id),
+        cliente: this.state.clientes.find((e) => e.idCli === _id),
       });
     } else {
       this.setState({ modalHeader: "Nuevo" });
@@ -39,22 +52,13 @@ class ClientesTable extends Component {
     }
   };
 
-  SubmitHandler = (cli) => {
-    const { cliente } = this.state;
-    if (cliente.idCli === -1) {
-      this.props.postData("POST", cli);
-    } else {
-      this.props.postData(
-        "PUT",
-        { ...cli, idCli: cliente.idCli },
-        cliente.idCli
-      );
-    }
+  SubmitHandler = () => {
+    this.getCustomers();
     this.setState({ modalIsOpen: false });
   };
 
   render() {
-    const { modalHeader, modalIsOpen } = this.state;
+    const { modalHeader, modalIsOpen, clientes } = this.state;
     return (
       <React.Fragment>
         <div className="row">
@@ -81,7 +85,7 @@ class ClientesTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.clientes.map((e, i) => {
+            {clientes ? clientes.map((e, i) => {
               return (
                 <tr key={i}>
                   <td>{e.idCli}</td>
@@ -98,7 +102,7 @@ class ClientesTable extends Component {
                   </td>
                 </tr>
               );
-            })}
+            }) : ""}
           </tbody>
         </Table>
         <CustomModal

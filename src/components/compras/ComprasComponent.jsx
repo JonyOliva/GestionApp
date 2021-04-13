@@ -7,12 +7,8 @@ import { Alert } from "react-bootstrap";
 class ComprasComponent extends Component {
   static contextType = SesionContext;
 
-  state = { 
-    existencias: []
-  };
-
   render() {
-    let alert = this.context.alert;
+    let alert = this.context.alert.get();
     return (
       <div className="container mt-2">
         <div className="d-flex">
@@ -21,7 +17,7 @@ class ComprasComponent extends Component {
             className="ml-auto"
             variant={alert.style}
             show={alert.enable}
-            onClose={this.AlertClose}
+            onClose={this.context.alert.close}
             dismissible
           >
             {alert.head} {"  "}
